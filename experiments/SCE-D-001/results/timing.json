@@ -1,0 +1,16 @@
+{
+  "experiment": "SCE-D-001",
+  "timestamp": "2026-03-21T13:49:03Z",
+  "phases": {
+    "phase1_baseline_ms": 17972,
+    "phase2_scale_zero_ms": 1717,
+    "phase3_cache_window_ms": 35436,
+    "phase4_post_cache_ms": 17886
+  },
+  "results": {
+    "baseline_availability_pct": 100,
+    "cache_window_availability_pct": 0,
+    "postcache_availability_pct": 0,
+    "fail_behavior": "fail-secure"
+  }
+}

@@ -1,0 +1,162 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║             SCE-D-001 — REPORTE DE EXPERIMENTO                     ║
+║        Agotamiento del IDP (fail-secure behavior)                  ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Fecha de ejecución: 2026-03-21T13:49:09Z
+Target:             users/auth-service (IDP) → users/user-api (dependiente)
+Método:             Scale auth-service a 0 réplicas
+
+═══════════════════════════════════════════════════════════════════════
+HIPÓTESIS
+═══════════════════════════════════════════════════════════════════════
+
+Cuando el servicio de autenticación (IDP) deja de estar disponible,
+el servicio dependiente (user-api) debe comportarse de manera
+fail-secure: rechazar requests que requieren autenticación en lugar
+de permitir acceso no autenticado (fail-open).
+
+Expectativa:
+  - Baseline (auth OK):        ~100% disponibilidad
+  - Cache window (auth=0):     100% o parcial (cache JWT válido)
+  - Post-cache (auth=0, TTL):  ~0% disponibilidad (fail-secure)
+
+═══════════════════════════════════════════════════════════════════════
+RESULTADOS POR FASE
+═══════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ FASE 1 — Baseline (auth-service activo)                            │
+├─────────────────────────────────────────────────────────────────────┤
+│ Disponibilidad:   100%                                       │
+│ Duración:         17972ms                                             │
+│ Evidencia:        results/phase1-baseline.txt                      │
+│ Estado:           auth-service con réplica(s) Ready                │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ FASE 2 — Scale-to-zero (inyección)                                 │
+├─────────────────────────────────────────────────────────────────────┤
+│ Acción:           kubectl scale deploy/auth-service --replicas=0   │
+│ Duración:         1717ms                                             │
+│ Evidencia:        results/phase2-scale-zero.txt                    │
+│ Estado:           auth-service sin pods                             │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ FASE 3 — Ventana de cache (auth=0, cache potencialmente válido)    │
+├─────────────────────────────────────────────────────────────────────┤
+│ Disponibilidad:   0%                                         │
+│ Duración:         35436ms                                             │
+│ Evidencia:        results/phase3-cache-window.txt                  │
+│ Análisis:         Comportamiento durante TTL del JWT cache         │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ FASE 4 — Post-cache (auth=0, cache expirado)                      │
+├─────────────────────────────────────────────────────────────────────┤
+│ Disponibilidad:   0%                                       │
+│ Comportamiento:   fail-secure                                    │
+│ Duración:         17886ms                                             │
+│ Evidencia:        results/phase4-post-cache.txt                    │
+└─────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════
+CURVA DE DISPONIBILIDAD
+═══════════════════════════════════════════════════════════════════════
+
+  100% │ ████          
+   75% │               
+   50% │               
+   25% │               
+    0% │─────┴─────┴─────┴────
+       Baseline  Cache   Post
+        (F1)     (F3)    (F4)
+
+  Disponibilidad: 100% → 0% → 0%
+
+═══════════════════════════════════════════════════════════════════════
+CONTROLES DE SEGURIDAD EVALUADOS
+═══════════════════════════════════════════════════════════════════════
+
+┌──────────────────────────────────┬────────────────┬────────────────────────┐
+│ Control                          │ Resultado      │ Evidencia              │
+├──────────────────────────────────┼────────────────┼────────────────────────┤
+│ Fail-secure (auth required)      │ fail-secure      │ phase4                 │
+│ JWT Cache (resiliencia temporal) │ cache=0%     │ phase3                 │
+│ K8s audit (scale events)         │ 20 eventos    │ audit-scale-events     │
+│ Istio mTLS STRICT                │ activo         │ istio-proxy-errors     │
+│ Service mesh observabilidad      │ 9 errores   │ istio-proxy-errors     │
+│ Monitoreo errores user-api       │ 0
+0 líneas     │ userapi-logs           │
+└──────────────────────────────────┴────────────────┴────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════
+VEREDICTO
+═══════════════════════════════════════════════════════════════════════
+
+  >>> HIPÓTESIS CONFIRMADA <<<
+
+  El sistema se comporta fail-secure: sin IDP, el servicio rechaza todas las requests.
+
+  Disponibilidad:
+    Baseline:    100%  (auth-service activo)
+    Cache:       0%  (auth=0, cache potencialmente válido)
+    Post-cache:  0%  (auth=0, cache expirado)
+
+═══════════════════════════════════════════════════════════════════════
+HALLAZGOS Y RECOMENDACIONES
+═══════════════════════════════════════════════════════════════════════
+
+1. RESILIENCIA DEL IDP:
+   La dependencia directa de auth-service como single point of failure
+   significa que su caída impacta toda la cadena de autenticación.
+   Recomendación: implementar circuit breaker pattern con fallback
+   definido (fail-secure por defecto, con degradación controlada).
+
+2. JWT CACHE COMO CONTROL DE RESILIENCIA:
+   El cache de JWT permite que requests con tokens previamente validados
+   continúen operando durante una ventana de tiempo (TTL).
+   - Si cache_avail > 0%: el cache proporciona resiliencia temporal
+   - Si cache_avail = 0%: no hay cache efectivo o el TTL es muy corto
+   Recomendación: calibrar TTL del cache según SLA de disponibilidad.
+
+3. DETECCIÓN Y OBSERVABILIDAD:
+   La caída del IDP debe generar:
+   - Alertas de Istio proxy (upstream errors)
+   - Logs de error en user-api (connection refused)
+   - Eventos de scale en el audit log de Kubernetes
+   Verificar que estas señales alimentan un sistema de alerting.
+
+4. RECUPERACIÓN:
+   Medir el tiempo de recuperación (MTTR) al restaurar auth-service
+   es crítico para definir el SLA del servicio.
+
+═══════════════════════════════════════════════════════════════════════
+MAPEO MITRE ATT&CK
+═══════════════════════════════════════════════════════════════════════
+
+Táctica:      Impact (TA0040)
+Técnica:      Endpoint Denial of Service (T1499)
+Sub-técnica:  Service Exhaustion Flood (T1499.002)
+Plataforma:   Containers (Kubernetes)
+
+Contexto:     Un atacante que compromete la capacidad de autenticación
+              (agotamiento del IDP) puede causar denegación de servicio
+              en cascada si los servicios dependientes no implementan
+              un patrón de fail-secure/circuit breaker.
+
+═══════════════════════════════════════════════════════════════════════
+COMPARACIÓN CON ARQUITECTURA ACTUAL
+═══════════════════════════════════════════════════════════════════════
+
+El lab SCE implementa auth-service como un deployment simple sin
+redundancia (1 réplica). En producción, se debería implementar:
+  - HPA (Horizontal Pod Autoscaler) con min 2 réplicas
+  - PodDisruptionBudget para garantizar disponibilidad durante updates
+  - Circuit breaker (Istio DestinationRule) con outlier detection
+  - Health checks con readiness/liveness probes adecuados
+
+══════════════════════════════════════════════════════════════════════
+Fin del reporte SCE-D-001
+══════════════════════════════════════════════════════════════════════

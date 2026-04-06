@@ -1,0 +1,16 @@
+{
+  "experiment": "SCE-I-002",
+  "timestamp": "2026-03-21T13:44:24Z",
+  "phases": {
+    "phase1_varlog_write_ms": 103,
+    "phase2_stdout_tamper_ms": 124,
+    "phase3_es_access_ms": 15152,
+    "phase4_host_audit_ms": 113
+  },
+  "results": {
+    "varlog_write_blocked": true,
+    "stdout_tamper_possible": false,
+    "es_access_blocked": true,
+    "host_access_blocked": true
+  }
+}

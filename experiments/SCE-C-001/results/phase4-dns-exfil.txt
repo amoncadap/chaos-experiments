@@ -1,0 +1,11 @@
+═══ FASE 4: Exfiltración por DNS ═══
+Timestamp: 2026-03-21T13:43:54Z
+Comando: curl -sf --max-time 5 http://ifconfig.me
+Exit code: 28
+Duración: 5147ms
+
+─── Output ───
+command terminated with exit code 28
+
+RESULTADO: DNS EXFILTRACIÓN BLOQUEADA
+CONTROL EFECTIVO: La resolución DNS externa y/o egress HTTP bloqueados

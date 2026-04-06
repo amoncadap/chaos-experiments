@@ -1,0 +1,164 @@
+═══ Evidencia: Audit Log — scale events en users ═══
+Timestamp: 2026-03-21T13:49:09Z
+Eventos encontrados: 20
+
+{
+  "timestamp": "2026-03-21T13:29:57.918419Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "user-api",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:29:57.927651Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "user-api",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:30:07.580262Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "user-api",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:30:10.505179Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:44:59.018532Z",
+  "user": "kubernetes-admin",
+  "verb": "patch",
+  "name": "auth-service",
+  "subresource": "scale",
+  "sourceIP": "172.18.0.1"
+}
+{
+  "timestamp": "2026-03-21T13:44:59.028973Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:44:59.071667Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:44:59.076425Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:45:00.443964Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:45:53.167176Z",
+  "user": "kubernetes-admin",
+  "verb": "patch",
+  "name": "auth-service",
+  "subresource": "scale",
+  "sourceIP": "172.18.0.1"
+}
+{
+  "timestamp": "2026-03-21T13:45:53.172569Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:45:53.175855Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:45:53.178163Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:46:23.200401Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:46:27.781330Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:48:08.583343Z",
+  "user": "kubernetes-admin",
+  "verb": "patch",
+  "name": "auth-service",
+  "subresource": "scale",
+  "sourceIP": "172.18.0.1"
+}
+{
+  "timestamp": "2026-03-21T13:48:08.592015Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:48:08.611947Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:48:08.619486Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}
+{
+  "timestamp": "2026-03-21T13:48:10.028230Z",
+  "user": "system:serviceaccount:kube-system:deployment-controller",
+  "verb": "update",
+  "name": "auth-service",
+  "subresource": "status",
+  "sourceIP": "172.18.0.2"
+}

@@ -1,0 +1,21 @@
+═══ FASE 3: Acceso directo a Elasticsearch ═══
+Timestamp: 2026-03-21T13:44:24Z
+Exit code: 0
+Duración: 15152ms
+
+─── Output ───
+=== Intento 1: Conectar a ES en logging namespace ===
+BLOCKED: connection to ES timed out
+
+=== Intento 2: Intentar eliminar índice fluentd ===
+BLOCKED: DELETE to ES timed out
+
+=== Intento 3: Intentar insertar documento falso ===
+BLOCKED: POST to ES timed out
+
+RESULTADO: ACCESO A ELASTICSEARCH BLOQUEADO
+CONTROL EFECTIVO: NetworkPolicy default-deny-all impide conexión de pods
+de aplicación al namespace logging. El atacante no puede:
+  - Eliminar índices (DELETE fluentd-*)
+  - Modificar documentos existentes
+  - Insertar registros falsos directamente en ES

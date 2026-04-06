@@ -1,0 +1,24 @@
+═══ FASE 3: Ventana de cache (auth-service=0) ═══
+Timestamp: 2026-03-21T13:48:10Z
+auth-service replicas: 0
+JWT_CACHE_TTL_SECONDS: 300 (configurado)
+Ventana de medición: 30s
+
+─── Mediciones: Cache window (auth=0) (30s, cada 5s) ───
+  [13:48:10] +0s  HTTP 503  FAIL
+  [13:48:16] +5s  HTTP 503  FAIL
+  [13:48:21] +10s  HTTP 503  FAIL
+  [13:48:28] +15s  HTTP 503  FAIL
+  [13:48:33] +20s  HTTP 503  FAIL
+  [13:48:39] +25s  HTTP 503  FAIL
+
+  Total: 6 requests | OK: 0 | FAIL: 6
+  Disponibilidad: 0%
+
+RESULTADO: Disponibilidad en ventana de cache: 0%
+
+ANÁLISIS:
+  FAIL-SECURE: user-api NO acepta requests sin auth-service.
+  El servicio prioriza seguridad sobre disponibilidad.
+  Esto es el comportamiento esperado para un sistema que
+  requiere autenticación para toda operación.

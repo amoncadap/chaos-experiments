@@ -1,0 +1,13 @@
+═══ FASE 1: Reconocimiento de credenciales ═══
+Timestamp: 2026-03-21T13:43:43Z
+Comando: kubectl exec -n payments deploy/payment-processor -c payment-processor -- env
+Exit code: 0
+Duración: 95ms
+
+─── Credenciales encontradas ───
+DB_PASSWORD=super-secret-db-password-lab-only
+API_KEY=api-key-that-should-be-in-vault
+STRIPE_KEY=sk_test_lab_key_not_real
+
+RESULTADO: HALLAZGO CONFIRMADO — Credenciales visibles como env vars
+IMPACTO: Un atacante con acceso al pod puede leer DB_PASSWORD, API_KEY, STRIPE_KEY

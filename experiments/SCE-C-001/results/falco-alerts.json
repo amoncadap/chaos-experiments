@@ -1,0 +1,10 @@
+═══ Evidencia Falco — Alertas SCE-C-001 ═══
+Timestamp recolección: 2026-03-21T13:44:04Z
+Alertas encontradas: 0
+
+(No se detectaron alertas Falco en los últimos 10 minutos)
+
+NOTA: Es posible que las reglas Falco SCE-C-001 no se hayan
+activado porque los kubectl exec se ejecutan desde fuera del pod
+(no desde un proceso dentro del contenedor). Las reglas de Falco
+monitorean syscalls dentro del contenedor.
