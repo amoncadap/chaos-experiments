@@ -1,0 +1,23 @@
+═══ FASE 1: Escritura en /var/log/ ═══
+Timestamp: 2026-03-21T13:44:09Z
+Comando: sh -c 'touch /var/log/...; echo > /var/log/...'
+Exit code: 0
+Duración: 103ms
+
+─── Output ───
+=== Intento 1: Crear archivo en /var/log/ ===
+touch: /var/log/fake-audit.log: Read-only file system
+BLOCKED: touch /var/log/fake-audit.log
+=== Intento 2: Escribir en /var/log/messages ===
+BLOCKED: write /var/log/messages
+=== Intento 3: Crear directorio en /var/log/ ===
+sh: can't create /var/log/messages: Read-only file system
+mkdir: can't create directory '/var/log/attacker': Read-only file system
+BLOCKED: mkdir /var/log/attacker
+=== Intento 4: Escribir en /tmp/ (control — debe funcionar) ===
+ALLOWED: write /tmp/test-write.txt
+
+RESULTADO: ESCRITURA EN /var/log/ BLOQUEADA
+CONTROL EFECTIVO: readOnlyRootFilesystem impide modificar archivos de log
+NOTA: /tmp/ sí permite escritura (emptyDir montado) — confirma que el
+      bloqueo es específico del filesystem raíz, no un error de permisos

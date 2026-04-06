@@ -1,0 +1,6 @@
+═══ Evidencia: Logs de user-api ═══
+Timestamp: 2026-03-21T13:49:08Z
+Pod: user-api-59956cd889-8hh2n
+
+─── Últimos 50 líneas (5 min) ───
+

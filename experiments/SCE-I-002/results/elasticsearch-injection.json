@@ -1,0 +1,6 @@
+═══ Evidencia Elasticsearch — Log Injection ═══
+Timestamp recolección: 2026-03-21T13:44:34Z
+Registros falsos encontrados: 0
+
+La línea inyectada no fue encontrada en Elasticsearch.
+(Puede que Fluentd aún no la haya procesado, o el flush interval no ha pasado)

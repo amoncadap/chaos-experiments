@@ -1,0 +1,106 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║             SCE-C-001 — REPORTE DE EXPERIMENTO                     ║
+║        Exfiltración de credenciales desde pod comprometido         ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Fecha de ejecución: 2026-03-21T13:44:04Z
+Target:             payments/payment-processor
+Imagen:             curlimages/curl:latest
+
+═══════════════════════════════════════════════════════════════════════
+HIPÓTESIS
+═══════════════════════════════════════════════════════════════════════
+
+Las credenciales expuestas como variables de entorno en payment-processor
+pueden ser leídas trivialmente por un atacante con acceso al pod, pero
+la exfiltración a destinos externos es bloqueada por NetworkPolicy y
+el acceso es detectado por Falco y registrado en el audit log de K8s.
+
+═══════════════════════════════════════════════════════════════════════
+RESULTADOS POR FASE
+═══════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ FASE 1 — Reconocimiento de credenciales                           │
+├─────────────────────────────────────────────────────────────────────┤
+│ Resultado:    HALLAZGO CONFIRMADO                                  │
+│ Credenciales: 3 encontradas (DB_PASSWORD, API_KEY, STRIPE_KEY) │
+│ Duración:     95ms                                              │
+│ Evidencia:    results/phase1-recon.txt                             │
+│ Impacto:      Un atacante con exec puede leer secretos directamente│
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ FASE 2 — Lectura del ServiceAccount token                         │
+├─────────────────────────────────────────────────────────────────────┤
+│ Token accesible: false                                        │
+│ Duración:        104ms                                            │
+│ Evidencia:       results/phase2-sa-token.txt                       │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ FASE 3 — Exfiltración por red (egress HTTP a IP externa)          │
+├─────────────────────────────────────────────────────────────────────┤
+│ Egress bloqueado: true                                         │
+│ Duración:         5157ms                                           │
+│ Evidencia:        results/phase3-network-exfil.txt                 │
+│ Control:          NetworkPolicy default-deny-all                   │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ FASE 4 — Exfiltración por DNS                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ DNS exfil bloqueada: true                                   │
+│ Duración:            5147ms                                        │
+│ Evidencia:           results/phase4-dns-exfil.txt                  │
+└─────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════
+CONTROLES DE SEGURIDAD EVALUADOS
+═══════════════════════════════════════════════════════════════════════
+
+┌──────────────────────────────┬────────────────┬──────────────────────────┐
+│ Control                      │ Resultado      │ Evidencia                │
+├──────────────────────────────┼────────────────┼──────────────────────────┤
+│ NetworkPolicy default-deny   │ EFECTIVO       │ phase3, phase4             │
+│ Falco runtime detection      │ 2 alertas    │ falco-alerts.json          │
+│ K8s audit logging            │ 5 eventos    │ audit-exec-events.json     │
+│ automountSAToken: false      │ EFECTIVO       │ phase2-sa-token.txt        │
+│ Vault (vs env vars)          │ N/A — comparar │ Ver payment-api.yaml       │
+└──────────────────────────────┴────────────────┴──────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════
+HALLAZGOS Y RECOMENDACIONES
+═══════════════════════════════════════════════════════════════════════
+
+1. HALLAZGO PRINCIPAL (Confidencialidad):
+   Las credenciales en payment-processor están expuestas como variables
+   de entorno directas. Cualquier proceso con acceso al pod puede leerlas
+   trivialmente con 'env' o leyendo /proc/self/environ.
+
+2. CONTROL EFECTIVO (Red):
+   NetworkPolicy default-deny-all bloquea exitosamente la exfiltración
+   de credenciales a destinos externos por HTTP.
+
+3. REMEDIACIÓN RECOMENDADA:
+   Migrar credenciales de env vars a Vault Agent Injector (ver implementación
+   en payment-api.yaml como referencia). Esto elimina las credenciales
+   del espacio de memoria del proceso y las inyecta como archivos en tmpfs.
+
+4. COMPARACIÓN payment-processor vs payment-api:
+   - payment-processor: credenciales en env vars (VULNERABLE)
+   - payment-api: credenciales vía Vault Agent Injector (REMEDIADO)
+   Esta diferencia valida la efectividad de Vault como control.
+
+═══════════════════════════════════════════════════════════════════════
+MAPEO MITRE ATT&CK
+═══════════════════════════════════════════════════════════════════════
+
+Táctica:    Credential Access (TA0006)
+Técnica:    Unsecured Credentials: Credentials in Files (T1552.001)
+Sub-técnica: Container Environment Variables
+Plataforma: Containers (Kubernetes)
+
+══════════════════════════════════════════════════════════════════════
+Fin del reporte SCE-C-001
+══════════════════════════════════════════════════════════════════════

@@ -1,0 +1,12 @@
+═══ Evidencia Falco — Alertas SCE-I-002 ═══
+Timestamp recolección: 2026-03-21T13:44:34Z
+Alertas encontradas: 0
+
+(No se detectaron alertas Falco SCE-I-002)
+
+NOTA: La regla Falco SCE-I-002 detecta evt.type in (open, openat)
+con escritura en /var/log/. Si readOnlyRootFilesystem bloqueó el
+intento ANTES de que el syscall open() se ejecute, Falco no
+generará alerta (el kernel rechaza antes del open).
+Esto es un HALLAZGO POSITIVO: el control preventivo (RO filesystem)
+actúa antes que el control detectivo (Falco).

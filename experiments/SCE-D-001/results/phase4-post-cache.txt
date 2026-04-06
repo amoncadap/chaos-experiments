@@ -1,0 +1,20 @@
+═══ FASE 4: Post-cache (auth-service=0, TTL expirado) ═══
+Timestamp: 2026-03-21T13:48:45Z
+auth-service replicas: 0 (confirmado)
+Ventana de medición: 15s
+
+─── Mediciones: Post-cache (auth=0) (15s, cada 5s) ───
+  [13:48:45] +0s  HTTP 503  FAIL
+  [13:48:51] +5s  HTTP 503  FAIL
+  [13:48:57] +10s  HTTP 503  FAIL
+
+  Total: 3 requests | OK: 0 | FAIL: 3
+  Disponibilidad: 0%
+
+RESULTADO: Disponibilidad post-cache: 0%
+COMPORTAMIENTO: fail-secure
+
+FAIL-SECURE CONFIRMADO:
+  Después de que el cache expira, user-api rechaza todas las
+  requests porque no puede validar tokens con auth-service.
+  → Seguridad mantenida, disponibilidad sacrificada.

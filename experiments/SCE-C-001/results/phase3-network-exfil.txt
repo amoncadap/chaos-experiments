@@ -1,0 +1,11 @@
+═══ FASE 3: Exfiltración por red (egress externo) ═══
+Timestamp: 2026-03-21T13:43:48Z
+Comando: curl -sf --max-time 5 http://1.1.1.1/
+Exit code: 28
+Duración: 5157ms
+
+─── Output ───
+command terminated with exit code 28
+
+RESULTADO: EGRESS BLOQUEADO — NetworkPolicy default-deny-all efectiva
+CONTROL EFECTIVO: El atacante no puede enviar credenciales a un servidor externo

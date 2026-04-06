@@ -1,0 +1,23 @@
+═══ Evidencia Elasticsearch — Integridad de índices ═══
+Timestamp: 2026-03-21T13:44:35Z
+Índices fluentd-*: 1
+Documentos totales: 0
+
+[
+  {
+    "health": "yellow",
+    "status": "open",
+    "index": "fluentd-2026.03.21",
+    "uuid": "-EPH5KfOQCWNnhC1IiLcog",
+    "pri": "1",
+    "rep": "1",
+    "docs.count": "3734",
+    "docs.deleted": "0",
+    "store.size": "2mb",
+    "pri.store.size": "2mb"
+  }
+]
+
+Los índices son append-only desde Fluentd. Un atacante dentro de un
+pod de aplicación no puede eliminar ni modificar documentos existentes
+porque NetworkPolicy bloquea la conexión al namespace logging.

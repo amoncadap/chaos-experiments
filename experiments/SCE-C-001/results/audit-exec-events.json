@@ -1,0 +1,64 @@
+═══ Evidencia Audit Log — kubectl exec en payments ═══
+Timestamp recolección: 2026-03-21T13:44:04Z
+Eventos encontrados: 5
+
+{
+  "timestamp": "2026-03-21T13:43:43.279215Z",
+  "user": "kubernetes-admin",
+  "verb": "get",
+  "resource": "pods",
+  "name": "payment-processor-66fd7c4f9-rhbt7",
+  "namespace": "payments",
+  "subresource": "exec",
+  "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=env&container=payment-processor&stderr=true&stdout=true",
+  "sourceIP": "172.18.0.1",
+  "decision": "allow"
+}
+{
+  "timestamp": "2026-03-21T13:43:43.576365Z",
+  "user": "kubernetes-admin",
+  "verb": "get",
+  "resource": "pods",
+  "name": "payment-processor-66fd7c4f9-rhbt7",
+  "namespace": "payments",
+  "subresource": "exec",
+  "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=env&container=payment-processor&stderr=true&stdout=true",
+  "sourceIP": "172.18.0.1",
+  "decision": "allow"
+}
+{
+  "timestamp": "2026-03-21T13:43:43.699341Z",
+  "user": "kubernetes-admin",
+  "verb": "get",
+  "resource": "pods",
+  "name": "payment-processor-66fd7c4f9-rhbt7",
+  "namespace": "payments",
+  "subresource": "exec",
+  "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=cat&command=%2Frun%2Fsecrets%2Fkubernetes.io%2Fserviceaccount%2Ftoken&container=payment-processor&stderr=true&stdout=true",
+  "sourceIP": "172.18.0.1",
+  "decision": "allow"
+}
+{
+  "timestamp": "2026-03-21T13:43:43.827954Z",
+  "user": "kubernetes-admin",
+  "verb": "get",
+  "resource": "pods",
+  "name": "payment-processor-66fd7c4f9-rhbt7",
+  "namespace": "payments",
+  "subresource": "exec",
+  "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=curl&command=-sf&command=--max-time&command=5&command=http%3A%2F%2F1.1.1.1%2F&container=payment-processor&stderr=true&stdout=true",
+  "sourceIP": "172.18.0.1",
+  "decision": "allow"
+}
+{
+  "timestamp": "2026-03-21T13:43:49.022113Z",
+  "user": "kubernetes-admin",
+  "verb": "get",
+  "resource": "pods",
+  "name": "payment-processor-66fd7c4f9-rhbt7",
+  "namespace": "payments",
+  "subresource": "exec",
+  "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=curl&command=-sf&command=--max-time&command=5&command=http%3A%2F%2Fifconfig.me&container=payment-processor&stderr=true&stdout=true",
+  "sourceIP": "172.18.0.1",
+  "decision": "allow"
+}
