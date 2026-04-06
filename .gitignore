@@ -1,5 +1,0 @@
-# Resultados de experimentos (contienen datos del lab)
-experiments/*/results/
-
-# macOS
-.DS_Store
