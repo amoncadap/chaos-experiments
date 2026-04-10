@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>k9s — sce-lab</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1b26; color: #c0caf5; font-family: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace; font-size: 13px; }
+
+  .screen { width: 900px; background: #1a1b26; border: 1px solid #3b4261; margin: 24px auto; border-radius: 6px; overflow: hidden; }
+  .label { background: #24283b; color: #7aa2f7; padding: 6px 14px; font-size: 11px; font-weight: bold; border-bottom: 1px solid #3b4261; letter-spacing: 0.05em; display: flex; justify-content: space-between; }
+  .label span { color: #565f89; }
+
+  /* Top info bar */
+  .topbar { background: #16161e; padding: 4px 10px; font-size: 11px; display: flex; gap: 24px; border-bottom: 1px solid #3b4261; flex-wrap: wrap; }
+  .topbar .kv { display: flex; gap: 5px; }
+  .topbar .k { color: #565f89; }
+  .topbar .v { color: #9ece6a; }
+  .topbar .v.blue { color: #7aa2f7; }
+  .topbar .v.yellow { color: #e0af68; }
+  .topbar .v.red { color: #f7768e; }
+
+  /* Command bar */
+  .cmdbar { background: #16161e; padding: 3px 10px; font-size: 11px; color: #565f89; border-bottom: 1px solid #3b4261; }
+  .cmdbar .cmd { color: #bb9af7; font-weight: bold; }
+  .cmdbar .ctx { color: #7aa2f7; }
+
+  /* Column headers */
+  .thead { background: #24283b; padding: 3px 10px; display: grid; font-size: 11px; color: #565f89; font-weight: bold; border-bottom: 1px solid #3b4261; }
+  .tbody { padding: 0; }
+  .row { padding: 2px 10px; display: grid; font-size: 12px; }
+  .row:hover { background: #24283b; }
+  .row.selected { background: #2d3f6b; }
+
+  /* Colors */
+  .green { color: #9ece6a; }
+  .red { color: #f7768e; }
+  .yellow { color: #e0af68; }
+  .blue { color: #7aa2f7; }
+  .cyan { color: #7dcfff; }
+  .purple { color: #bb9af7; }
+  .gray { color: #565f89; }
+  .white { color: #c0caf5; }
+  .orange { color: #ff9e64; }
+
+  /* Grid templates per view */
+  .pods-grid { grid-template-columns: 120px 220px 50px 70px 80px 110px 90px 50px; }
+  .np-grid   { grid-template-columns: 180px 260px 80px; }
+  .dep-grid  { grid-template-columns: 160px 160px 60px 60px 60px 80px; }
+  .ev-grid   { grid-template-columns: 80px 120px 200px 280px 80px; }
+
+  .section-title {
+    background: #16161e;
+    color: #bb9af7;
+    padding: 8px 14px 4px;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    border-top: 2px solid #bb9af7;
+    text-transform: uppercase;
+  }
+
+  /* Status badges */
+  .badge { display: inline-block; padding: 0 5px; border-radius: 3px; font-size: 11px; font-weight: bold; }
+  .badge.run { background: #1a3a1a; color: #9ece6a; }
+  .badge.fail { background: #3a1a1a; color: #f7768e; }
+
+  /* Bottom nav */
+  .botbar { background: #16161e; padding: 3px 10px; font-size: 11px; color: #565f89; border-top: 1px solid #3b4261; display: flex; gap: 16px; }
+  .botbar b { color: #7aa2f7; }
+
+  /* Experiment badge */
+  .exp-badge { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 10px; font-weight: bold; margin-left: 8px; }
+  .exp-c { background: #3a1a1a; color: #f7768e; }
+  .exp-d { background: #1a2a3a; color: #7aa2f7; }
+  .exp-i { background: #1a3a1a; color: #9ece6a; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- VIEW 1: SCE-C-001 — Pods namespace payments -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen">
+  <div class="label">
+    k9s — Pods <span class="exp-badge exp-c">SCE-C-001</span>
+    <span>context: kind-sce-lab &nbsp;|&nbsp; 2026-04-09 15:13:57</span>
+  </div>
+  <div class="topbar">
+    <div class="kv"><span class="k">Context:</span><span class="v blue">kind-sce-lab</span></div>
+    <div class="kv"><span class="k">Cluster:</span><span class="v">sce-lab</span></div>
+    <div class="kv"><span class="k">User:</span><span class="v">kubernetes-admin</span></div>
+    <div class="kv"><span class="k">Namespace:</span><span class="v yellow">payments</span></div>
+    <div class="kv"><span class="k">Pods:</span><span class="v green">3/3</span></div>
+    <div class="kv"><span class="k">K8s:</span><span class="v">v1.35.0</span></div>
+  </div>
+  <div class="cmdbar"><span class="cmd">:pods</span> &nbsp;›&nbsp; <span class="ctx">payments</span></div>
+  <div class="thead pods-grid">
+    <span>NAMESPACE</span><span>NAME</span><span>READY</span><span>STATUS</span><span>RESTARTS</span><span>IP</span><span>NODE</span><span>AGE</span>
+  </div>
+  <div class="tbody">
+    <div class="row pods-grid selected">
+      <span class="yellow">payments</span>
+      <span class="cyan">payment-processor-66fd7c4f9-rhbt7</span>
+      <span class="green">2/2</span>
+      <span class="badge run">Running</span>
+      <span class="orange">2</span>
+      <span class="gray">10.244.2.5</span>
+      <span class="gray">sce-lab-worker2</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row pods-grid">
+      <span class="yellow">payments</span>
+      <span class="white">payment-api-8df54d688-gvkvr</span>
+      <span class="green">2/2</span>
+      <span class="badge run">Running</span>
+      <span class="green">0</span>
+      <span class="gray">10.244.1.12</span>
+      <span class="gray">sce-lab-worker</span>
+      <span class="gray">10h</span>
+    </div>
+    <div class="row pods-grid">
+      <span class="yellow">payments</span>
+      <span class="white">postgresql-56b87b57df-v8h8t</span>
+      <span class="green">2/2</span>
+      <span class="badge run">Running</span>
+      <span class="orange">2</span>
+      <span class="gray">10.244.2.6</span>
+      <span class="gray">sce-lab-worker2</span>
+      <span class="gray">19d</span>
+    </div>
+  </div>
+  <div class="section-title">&#x25ba; Hallazgo SCE-C-001 — kubectl exec en payment-processor expuso env vars con credenciales</div>
+  <div style="padding:8px 14px; font-size:11px; color:#e0af68; background:#1e1e2e;">
+    <span class="gray">► </span><span class="red">API_KEY</span>=api-key-that-should-be-in-vault &nbsp;&nbsp;
+    <span class="red">STRIPE_KEY</span>=sk_test_lab_key_not_real &nbsp;&nbsp;
+    <span class="red">DB_PASSWORD</span>=super-secret-db-password-lab-only
+  </div>
+  <div class="botbar">
+    <span><b>a</b>:attach</span><span><b>d</b>:describe</span><span><b>e</b>:edit</span>
+    <span><b>l</b>:logs</span><span><b>s</b>:shell</span><span><b>ctrl-k</b>:kill</span>
+    <span><b>?</b>:help</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- VIEW 2: SCE-C-001 — NetworkPolicies payments -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen">
+  <div class="label">
+    k9s — NetworkPolicies <span class="exp-badge exp-c">SCE-C-001</span>
+    <span>context: kind-sce-lab &nbsp;|&nbsp; 2026-04-09 15:14:07</span>
+  </div>
+  <div class="topbar">
+    <div class="kv"><span class="k">Context:</span><span class="v blue">kind-sce-lab</span></div>
+    <div class="kv"><span class="k">Namespace:</span><span class="v yellow">payments</span></div>
+    <div class="kv"><span class="k">NetworkPolicies:</span><span class="v green">8</span></div>
+  </div>
+  <div class="cmdbar"><span class="cmd">:netpol</span> &nbsp;›&nbsp; <span class="ctx">payments</span></div>
+  <div class="thead np-grid">
+    <span>NAME</span><span>POD-SELECTOR</span><span>AGE</span>
+  </div>
+  <div class="tbody">
+    <div class="row np-grid selected">
+      <span class="red">default-deny-all</span>
+      <span class="gray">&lt;none&gt;</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row np-grid">
+      <span class="green">allow-dns-egress</span>
+      <span class="gray">&lt;none&gt;</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row np-grid">
+      <span class="green">allow-ingress-from-istio</span>
+      <span class="gray">&lt;none&gt;</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row np-grid">
+      <span class="green">allow-intra-namespace</span>
+      <span class="gray">&lt;none&gt;</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row np-grid">
+      <span class="green">allow-istiod-egress</span>
+      <span class="gray">&lt;none&gt;</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row np-grid">
+      <span class="green">allow-istiod-ingress</span>
+      <span class="gray">&lt;none&gt;</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row np-grid">
+      <span class="green">allow-postgres-egress</span>
+      <span class="cyan">sce-lab/db-access=true</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row np-grid">
+      <span class="green">allow-vault-egress</span>
+      <span class="gray">&lt;none&gt;</span>
+      <span class="gray">19d</span>
+    </div>
+  </div>
+  <div class="section-title">&#x25ba; Control SCE-C-001 — default-deny-all bloqueó egress HTTP y DNS hacia exterior</div>
+  <div style="padding:8px 14px; font-size:11px; color:#9ece6a; background:#1e1e2e;">
+    curl http://1.1.1.1 &nbsp;<span class="red">→ exit 28 (timeout)</span> &nbsp;&nbsp;
+    curl http://ifconfig.me &nbsp;<span class="red">→ exit 28 (timeout)</span>
+  </div>
+  <div class="botbar">
+    <span><b>d</b>:describe</span><span><b>e</b>:edit</span><span><b>ctrl-d</b>:delete</span><span><b>?</b>:help</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- VIEW 3: SCE-D-001 — Pods namespace users    -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen">
+  <div class="label">
+    k9s — Pods <span class="exp-badge exp-d">SCE-D-001</span>
+    <span>context: kind-sce-lab &nbsp;|&nbsp; 2026-04-09 15:14:50 (inyección)</span>
+  </div>
+  <div class="topbar">
+    <div class="kv"><span class="k">Context:</span><span class="v blue">kind-sce-lab</span></div>
+    <div class="kv"><span class="k">Namespace:</span><span class="v yellow">users</span></div>
+    <div class="kv"><span class="k">Pods:</span><span class="v red">1/2</span></div>
+    <div class="kv"><span class="k">⚠</span><span class="v red">auth-service scaled to 0</span></div>
+  </div>
+  <div class="cmdbar"><span class="cmd">:pods</span> &nbsp;›&nbsp; <span class="ctx">users</span></div>
+  <div class="thead pods-grid">
+    <span>NAMESPACE</span><span>NAME</span><span>READY</span><span>STATUS</span><span>RESTARTS</span><span>IP</span><span>NODE</span><span>AGE</span>
+  </div>
+  <div class="tbody">
+    <div class="row pods-grid">
+      <span class="yellow">users</span>
+      <span class="white">user-api-59956cd889-8hh2n</span>
+      <span class="green">2/2</span>
+      <span class="badge run">Running</span>
+      <span class="orange">2</span>
+      <span class="gray">10.244.2.4</span>
+      <span class="gray">sce-lab-worker2</span>
+      <span class="gray">19d</span>
+    </div>
+  </div>
+  <div style="padding: 6px 14px; color: #565f89; font-size:12px; font-style:italic;">
+    &nbsp;&nbsp;— auth-service: 0 replicas (scaled to zero) —
+  </div>
+  <div class="section-title">&#x25ba; Inyección SCE-D-001 — auth-service escalado a 0 réplicas → disponibilidad 0%</div>
+  <div style="padding:8px 14px; font-size:11px; background:#1e1e2e; line-height:1.8;">
+    <span class="gray">[15:14:52] +0s &nbsp;</span><span class="red">HTTP 503  FAIL</span><br>
+    <span class="gray">[15:14:58] +5s &nbsp;</span><span class="red">HTTP 503  FAIL</span><br>
+    <span class="gray">[15:15:04] +10s</span><span class="red"> HTTP 503  FAIL</span><br>
+    <span class="gray">[15:15:10] +15s</span><span class="red"> HTTP 503  FAIL</span><br>
+    <span class="cyan">Total: 6 req | OK: 0 | FAIL: 6 | Disponibilidad: 0%</span>
+  </div>
+  <div class="botbar">
+    <span><b>a</b>:attach</span><span><b>d</b>:describe</span><span><b>l</b>:logs</span><span><b>s</b>:shell</span><span><b>?</b>:help</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- VIEW 4: SCE-D-001 — Deployments namespace users -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen">
+  <div class="label">
+    k9s — Deployments <span class="exp-badge exp-d">SCE-D-001</span>
+    <span>context: kind-sce-lab &nbsp;|&nbsp; 2026-04-09 15:15:29 (post-cache)</span>
+  </div>
+  <div class="topbar">
+    <div class="kv"><span class="k">Context:</span><span class="v blue">kind-sce-lab</span></div>
+    <div class="kv"><span class="k">Namespace:</span><span class="v yellow">users</span></div>
+    <div class="kv"><span class="k">FAIL-SECURE</span><span class="v red">confirmado</span></div>
+  </div>
+  <div class="cmdbar"><span class="cmd">:deployments</span> &nbsp;›&nbsp; <span class="ctx">users</span></div>
+  <div class="thead dep-grid">
+    <span>NAMESPACE</span><span>NAME</span><span>DESIRED</span><span>CURRENT</span><span>READY</span><span>AGE</span>
+  </div>
+  <div class="tbody">
+    <div class="row dep-grid selected">
+      <span class="yellow">users</span>
+      <span class="red">auth-service</span>
+      <span class="gray">1</span>
+      <span class="red">0</span>
+      <span class="red">0</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row dep-grid">
+      <span class="yellow">users</span>
+      <span class="white">user-api</span>
+      <span class="gray">1</span>
+      <span class="green">1</span>
+      <span class="green">1</span>
+      <span class="gray">19d</span>
+    </div>
+  </div>
+  <div class="section-title">&#x25ba; Fail-secure SCE-D-001 — user-api rechaza requests sin auth-service (JWT_CACHE_TTL expirado)</div>
+  <div style="padding:8px 14px; font-size:11px; color:#9ece6a; background:#1e1e2e;">
+    Seguridad mantenida &nbsp;<span class="green">✓</span> &nbsp;&nbsp; Disponibilidad sacrificada &nbsp;<span class="red">✗</span> &nbsp;&nbsp;
+    JWT_CACHE_TTL: <span class="yellow">300s</span> &nbsp; auth-service replicas: <span class="red">0</span>
+  </div>
+  <div class="botbar">
+    <span><b>d</b>:describe</span><span><b>e</b>:edit</span><span><b>r</b>:rollout</span><span><b>s</b>:scale</span><span><b>?</b>:help</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- VIEW 5: SCE-I-002 — Pods payments (secctx)  -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen">
+  <div class="label">
+    k9s — Pods (describe) <span class="exp-badge exp-i">SCE-I-002</span>
+    <span>context: kind-sce-lab &nbsp;|&nbsp; 2026-04-09 15:16:39</span>
+  </div>
+  <div class="topbar">
+    <div class="kv"><span class="k">Context:</span><span class="v blue">kind-sce-lab</span></div>
+    <div class="kv"><span class="k">Namespace:</span><span class="v yellow">payments</span></div>
+    <div class="kv"><span class="k">Pod:</span><span class="v cyan">payment-processor</span></div>
+  </div>
+  <div class="cmdbar"><span class="cmd">:pods</span> &nbsp;›&nbsp; <span class="ctx">payments</span> &nbsp;›&nbsp; <b>d</b>:describe</div>
+  <div style="padding: 10px 14px; font-size: 12px; line-height: 2; background: #1e1e2e;">
+    <div><span class="gray">Name:         </span><span class="cyan">payment-processor-66fd7c4f9-rhbt7</span></div>
+    <div><span class="gray">Namespace:    </span><span class="yellow">payments</span></div>
+    <div><span class="gray">Node:         </span><span class="white">sce-lab-worker2/172.18.0.2</span></div>
+    <div><span class="gray">Status:       </span><span class="badge run">Running</span></div>
+    <div style="margin-top:6px;"><span class="purple">Security Context:</span></div>
+    <div style="padding-left:20px;">
+      <div><span class="gray">readOnlyRootFilesystem:   </span><span class="green">true</span></div>
+      <div><span class="gray">allowPrivilegeEscalation: </span><span class="green">false</span></div>
+      <div><span class="gray">runAsNonRoot:             </span><span class="green">true</span></div>
+      <div><span class="gray">runAsUser:                </span><span class="white">1000</span></div>
+      <div><span class="gray">capabilities.drop:        </span><span class="green">ALL</span></div>
+      <div><span class="gray">automountServiceAccountToken: </span><span class="green">false</span></div>
+    </div>
+  </div>
+  <div class="section-title">&#x25ba; Control SCE-I-002 — readOnlyRootFilesystem bloqueó escritura en /var/log/</div>
+  <div style="padding:8px 14px; font-size:11px; background:#1e1e2e; line-height:1.8;">
+    <span class="red">touch /var/log/fake-audit.log</span> <span class="gray">→</span> <span class="red">Read-only file system</span><br>
+    <span class="red">mkdir /var/log/attacker</span> <span class="gray">→</span> <span class="red">Read-only file system</span><br>
+    <span class="yellow">write /tmp/test-write.txt</span> <span class="gray">→</span> <span class="green">allowed</span> <span class="gray">(confirma: rootfs, no permisos)</span>
+  </div>
+  <div class="botbar">
+    <span><b>a</b>:attach</span><span><b>e</b>:edit</span><span><b>l</b>:logs</span><span><b>s</b>:shell</span><span><b>?</b>:help</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- VIEW 6: SCE-I-002 — NetworkPolicies payments -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="screen">
+  <div class="label">
+    k9s — NetworkPolicies <span class="exp-badge exp-i">SCE-I-002</span>
+    <span>context: kind-sce-lab &nbsp;|&nbsp; 2026-04-09 15:16:39</span>
+  </div>
+  <div class="topbar">
+    <div class="kv"><span class="k">Context:</span><span class="v blue">kind-sce-lab</span></div>
+    <div class="kv"><span class="k">Namespace:</span><span class="v yellow">payments</span></div>
+    <div class="kv"><span class="k">ES acceso:</span><span class="v red">BLOQUEADO</span></div>
+  </div>
+  <div class="cmdbar"><span class="cmd">:netpol</span> &nbsp;›&nbsp; <span class="ctx">payments</span></div>
+  <div class="thead np-grid">
+    <span>NAME</span><span>POD-SELECTOR</span><span>AGE</span>
+  </div>
+  <div class="tbody">
+    <div class="row np-grid selected">
+      <span class="red">default-deny-all</span>
+      <span class="gray">&lt;none&gt;</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row np-grid">
+      <span class="green">allow-dns-egress</span>
+      <span class="gray">&lt;none&gt;</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row np-grid">
+      <span class="green">allow-ingress-from-istio</span>
+      <span class="gray">&lt;none&gt;</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row np-grid">
+      <span class="green">allow-intra-namespace</span>
+      <span class="gray">&lt;none&gt;</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row np-grid">
+      <span class="green">allow-istiod-egress</span>
+      <span class="gray">&lt;none&gt;</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row np-grid">
+      <span class="green">allow-vault-egress</span>
+      <span class="gray">&lt;none&gt;</span>
+      <span class="gray">19d</span>
+    </div>
+    <div class="row np-grid">
+      <span class="green">allow-postgres-egress</span>
+      <span class="cyan">sce-lab/db-access=true</span>
+      <span class="gray">19d</span>
+    </div>
+  </div>
+  <div class="section-title">&#x25ba; Control SCE-I-002 — acceso directo a Elasticsearch (logging:9200) bloqueado por NetworkPolicy</div>
+  <div style="padding:8px 14px; font-size:11px; background:#1e1e2e; line-height:1.8;">
+    <span class="gray">GET elasticsearch-master.logging.svc:9200/</span> <span class="gray">→</span> <span class="red">connection timed out</span><br>
+    <span class="gray">POST elasticsearch-master.logging.svc:9200/fluentd-*/</span> <span class="gray">→</span> <span class="red">connection timed out</span><br>
+    <span class="green">✓</span> <span class="gray">No puede eliminar índices ni insertar registros falsos directamente</span>
+  </div>
+  <div class="botbar">
+    <span><b>d</b>:describe</span><span><b>e</b>:edit</span><span><b>ctrl-d</b>:delete</span><span><b>?</b>:help</span>
+  </div>
+</div>
+
+</body>
+</html>

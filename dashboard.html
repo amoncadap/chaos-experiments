@@ -126,10 +126,37 @@
     /* SECTION LABEL */
     .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 20px 0 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
 
-    /* K9S PLACEHOLDER */
-    .k9s-placeholder { background: var(--bg3); border: 1px dashed var(--border); border-radius: 8px; padding: 32px; text-align: center; color: var(--text-muted); }
-    .k9s-placeholder .icon { font-size: 32px; margin-bottom: 8px; }
-    .k9s-placeholder .k9s-desc { font-size: 12px; margin-top: 6px; }
+    /* K9S VIEWS */
+    .k9s-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 4px; }
+    @media (max-width: 900px) { .k9s-wrap { grid-template-columns: 1fr; } }
+    .k9s-screen { background: #1a1b26; border: 1px solid #3b4261; border-radius: 6px; overflow: hidden; font-family: 'JetBrains Mono','Fira Code',monospace; font-size: 11px; }
+    .k9s-title { background: #24283b; color: #7aa2f7; padding: 5px 12px; font-size: 10px; font-weight: bold; border-bottom: 1px solid #3b4261; display: flex; justify-content: space-between; }
+    .k9s-title span { color: #565f89; }
+    .k9s-topbar { background: #16161e; padding: 3px 10px; font-size: 10px; display: flex; gap: 16px; border-bottom: 1px solid #3b4261; flex-wrap: wrap; }
+    .k9s-topbar .kk { color: #565f89; }
+    .k9s-topbar .vv { color: #9ece6a; }
+    .k9s-topbar .vv.b { color: #7aa2f7; }
+    .k9s-topbar .vv.y { color: #e0af68; }
+    .k9s-topbar .vv.r { color: #f7768e; }
+    .k9s-cmd { background: #16161e; padding: 2px 10px; font-size: 10px; color: #bb9af7; font-weight: bold; border-bottom: 1px solid #3b4261; }
+    .k9s-cmd span { color: #565f89; }
+    .k9s-thead { background: #24283b; padding: 3px 10px; display: grid; font-size: 10px; color: #565f89; font-weight: bold; border-bottom: 1px solid #3b4261; }
+    .k9s-row { padding: 2px 10px; display: grid; font-size: 11px; }
+    .k9s-row.sel { background: #2d3f6b; }
+    .k9s-pods { grid-template-columns: 80px 170px 38px 60px 55px 85px 90px 32px; }
+    .k9s-np   { grid-template-columns: 160px 180px 50px; }
+    .k9s-dep  { grid-template-columns: 70px 130px 55px 55px 55px 55px; }
+    .k9s-finding { background: #16161e; border-top: 2px solid #bb9af7; padding: 6px 12px; font-size: 10px; line-height: 1.7; }
+    .k9s-botbar { background: #16161e; padding: 2px 10px; font-size: 10px; color: #565f89; border-top: 1px solid #3b4261; }
+    .k9s-botbar b { color: #7aa2f7; }
+    .kg { color: #9ece6a; } .kr { color: #f7768e; } .ky { color: #e0af68; }
+    .kb { color: #7aa2f7; } .kc { color: #7dcfff; } .km { color: #bb9af7; }
+    .k9s-badge { display: inline-block; padding: 0 5px; border-radius: 3px; font-size: 10px; font-weight: bold; }
+    .k9s-badge.run { background: #1a3a1a; color: #9ece6a; }
+    .k9s-exp { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 9px; font-weight: bold; margin-left: 6px; }
+    .k9s-exp.c { background: #3a1a1a; color: #f7768e; }
+    .k9s-exp.d { background: #1a2a3a; color: #7aa2f7; }
+    .k9s-exp.i { background: #1a3a1a; color: #9ece6a; }
 
     /* SUMMARY */
     .summary-table td:first-child { font-weight: 600; font-family: monospace; font-size: 13px; }
@@ -297,12 +324,35 @@
     <div class="details-content"><pre class="report" id="c001-report"></pre></div>
   </details>
 
-  <div class="section-title">k9s — Capturas de Pantalla del Cluster</div>
-  <div class="k9s-placeholder">
-    <div class="icon">🖥</div>
-    <div>Las capturas de k9s se guardarán aquí durante la ejecución del experimento</div>
-    <div class="k9s-desc">Vistas: Pods (baseline) · Events (inyección) · Logs del pod objetivo · Pods (rollback)</div>
-    <div class="k9s-desc" style="margin-top:8px;font-family:monospace">experiments/SCE-C-001/results/k9s-screenshots/</div>
+  <div class="section-title">k9s — Vistas del Cluster</div>
+  <div class="k9s-wrap">
+    <!-- k9s VIEW 1: pods payments -->
+    <div class="k9s-screen">
+      <div class="k9s-title">k9s — Pods <span class="k9s-exp c">SCE-C-001</span><span>kind-sce-lab | 2026-04-09 15:13:57</span></div>
+      <div class="k9s-topbar"><span class="kk">Namespace:</span><span class="vv y">payments</span><span class="kk">Pods:</span><span class="vv">3/3</span><span class="kk">K8s:</span><span class="vv b">v1.35.0</span></div>
+      <div class="k9s-cmd">:pods <span>› payments</span></div>
+      <div class="k9s-thead k9s-pods"><span>NS</span><span>NAME</span><span>RDY</span><span>STATUS</span><span>RESTRT</span><span>IP</span><span>NODE</span><span>AGE</span></div>
+      <div class="k9s-row k9s-pods sel"><span class="ky">payments</span><span class="kc">payment-processor-66fd7c4f9-rhbt7</span><span class="kg">2/2</span><span class="k9s-badge run">Running</span><span class="ky">2</span><span style="color:#565f89">10.244.2.5</span><span style="color:#565f89">worker2</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-row k9s-pods"><span class="ky">payments</span><span style="color:#c0caf5">payment-api-8df54d688-gvkvr</span><span class="kg">2/2</span><span class="k9s-badge run">Running</span><span class="kg">0</span><span style="color:#565f89">10.244.1.12</span><span style="color:#565f89">worker</span><span style="color:#565f89">10h</span></div>
+      <div class="k9s-row k9s-pods"><span class="ky">payments</span><span style="color:#c0caf5">postgresql-56b87b57df-v8h8t</span><span class="kg">2/2</span><span class="k9s-badge run">Running</span><span class="ky">2</span><span style="color:#565f89">10.244.2.6</span><span style="color:#565f89">worker2</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-finding"><span class="km">► HALLAZGO</span> — kubectl exec expuso <span class="kr">DB_PASSWORD</span>, <span class="kr">API_KEY</span>, <span class="kr">STRIPE_KEY</span> como env vars en payment-processor</div>
+      <div class="k9s-botbar"><b>d</b>:describe <b>l</b>:logs <b>s</b>:shell <b>?</b>:help</div>
+    </div>
+    <!-- k9s VIEW 2: netpol payments -->
+    <div class="k9s-screen">
+      <div class="k9s-title">k9s — NetworkPolicies <span class="k9s-exp c">SCE-C-001</span><span>kind-sce-lab | 2026-04-09 15:14:07</span></div>
+      <div class="k9s-topbar"><span class="kk">Namespace:</span><span class="vv y">payments</span><span class="kk">NetPols:</span><span class="vv">8</span></div>
+      <div class="k9s-cmd">:netpol <span>› payments</span></div>
+      <div class="k9s-thead k9s-np"><span>NAME</span><span>POD-SELECTOR</span><span>AGE</span></div>
+      <div class="k9s-row k9s-np sel"><span class="kr">default-deny-all</span><span style="color:#565f89">&lt;none&gt;</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-row k9s-np"><span class="kg">allow-dns-egress</span><span style="color:#565f89">&lt;none&gt;</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-row k9s-np"><span class="kg">allow-ingress-from-istio</span><span style="color:#565f89">&lt;none&gt;</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-row k9s-np"><span class="kg">allow-intra-namespace</span><span style="color:#565f89">&lt;none&gt;</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-row k9s-np"><span class="kg">allow-postgres-egress</span><span class="kc">sce-lab/db-access=true</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-row k9s-np"><span class="kg">allow-vault-egress</span><span style="color:#565f89">&lt;none&gt;</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-finding"><span class="km">► CONTROL</span> — default-deny-all bloqueó egress: <span class="kr">curl 1.1.1.1 → exit 28</span> · <span class="kr">curl ifconfig.me → exit 28</span></div>
+      <div class="k9s-botbar"><b>d</b>:describe <b>e</b>:edit <b>?</b>:help</div>
+    </div>
   </div>
 
 </div>
@@ -438,12 +488,30 @@
     <div class="details-content"><pre class="report" id="d001-report"></pre></div>
   </details>
 
-  <div class="section-title">k9s — Capturas de Pantalla del Cluster</div>
-  <div class="k9s-placeholder">
-    <div class="icon">🖥</div>
-    <div>Las capturas de k9s se guardarán aquí durante la ejecución del experimento</div>
-    <div class="k9s-desc">Vistas: Pods (baseline) · Deployments (scale-to-zero) · Events (K8s events) · Pods (rollback)</div>
-    <div class="k9s-desc" style="margin-top:8px;font-family:monospace">experiments/SCE-D-001/results/k9s-screenshots/</div>
+  <div class="section-title">k9s — Vistas del Cluster</div>
+  <div class="k9s-wrap">
+    <!-- k9s VIEW 3: pods users (inyección) -->
+    <div class="k9s-screen">
+      <div class="k9s-title">k9s — Pods <span class="k9s-exp d">SCE-D-001</span><span>kind-sce-lab | 15:14:50 (inyección)</span></div>
+      <div class="k9s-topbar"><span class="kk">Namespace:</span><span class="vv y">users</span><span class="kk">Pods:</span><span class="vv r">1/2</span><span class="kk">⚠</span><span class="vv r">auth-service scaled to 0</span></div>
+      <div class="k9s-cmd">:pods <span>› users</span></div>
+      <div class="k9s-thead k9s-pods"><span>NS</span><span>NAME</span><span>RDY</span><span>STATUS</span><span>RESTRT</span><span>IP</span><span>NODE</span><span>AGE</span></div>
+      <div class="k9s-row k9s-pods"><span class="ky">users</span><span style="color:#c0caf5">user-api-59956cd889-8hh2n</span><span class="kg">2/2</span><span class="k9s-badge run">Running</span><span class="ky">2</span><span style="color:#565f89">10.244.2.4</span><span style="color:#565f89">worker2</span><span style="color:#565f89">19d</span></div>
+      <div style="padding:3px 10px;color:#565f89;font-size:10px;font-style:italic;background:#1a1b26">— auth-service: 0 replicas (scaled to zero) —</div>
+      <div class="k9s-finding" style="line-height:1.9"><span class="km">► INYECCIÓN</span> — auth-service=0 → <span class="kr">HTTP 503 FAIL</span> ×6 · Disponibilidad: <span class="kr">0%</span><br><span style="color:#565f89">[15:14:52] [15:14:58] [15:15:04] [15:15:10] [15:15:16] [15:15:22]</span></div>
+      <div class="k9s-botbar"><b>d</b>:describe <b>l</b>:logs <b>s</b>:shell <b>?</b>:help</div>
+    </div>
+    <!-- k9s VIEW 4: deployments users -->
+    <div class="k9s-screen">
+      <div class="k9s-title">k9s — Deployments <span class="k9s-exp d">SCE-D-001</span><span>kind-sce-lab | 15:15:29 (post-cache)</span></div>
+      <div class="k9s-topbar"><span class="kk">Namespace:</span><span class="vv y">users</span><span class="kk">FAIL-SECURE:</span><span class="vv r">confirmado</span></div>
+      <div class="k9s-cmd">:deployments <span>› users</span></div>
+      <div class="k9s-thead k9s-dep"><span>NS</span><span>NAME</span><span>DESIRED</span><span>CURRENT</span><span>READY</span><span>AGE</span></div>
+      <div class="k9s-row k9s-dep sel"><span class="ky">users</span><span class="kr">auth-service</span><span style="color:#565f89">1</span><span class="kr">0</span><span class="kr">0</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-row k9s-dep"><span class="ky">users</span><span style="color:#c0caf5">user-api</span><span style="color:#565f89">1</span><span class="kg">1</span><span class="kg">1</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-finding"><span class="km">► FAIL-SECURE</span> — user-api rechaza requests sin auth-service · Seguridad <span class="kg">✓</span> · Disponibilidad <span class="kr">✗</span><br><span style="color:#565f89">JWT_CACHE_TTL: 300s · auth-service replicas: 0</span></div>
+      <div class="k9s-botbar"><b>d</b>:describe <b>r</b>:rollout <b>s</b>:scale <b>?</b>:help</div>
+    </div>
   </div>
 
 </div>
@@ -607,12 +675,43 @@
     <div class="details-content"><pre class="report" id="i002-report"></pre></div>
   </details>
 
-  <div class="section-title">k9s — Capturas de Pantalla del Cluster</div>
-  <div class="k9s-placeholder">
-    <div class="icon">🖥</div>
-    <div>Las capturas de k9s se guardarán aquí durante la ejecución del experimento</div>
-    <div class="k9s-desc">Vistas: Pods (baseline) · Events (inyección) · Logs del pod objetivo · Pods (rollback)</div>
-    <div class="k9s-desc" style="margin-top:8px;font-family:monospace">experiments/SCE-I-002/results/k9s-screenshots/</div>
+  <div class="section-title">k9s — Vistas del Cluster</div>
+  <div class="k9s-wrap">
+    <!-- k9s VIEW 5: pod describe payments secctx -->
+    <div class="k9s-screen">
+      <div class="k9s-title">k9s — Pod describe <span class="k9s-exp i">SCE-I-002</span><span>kind-sce-lab | 2026-04-09 15:16:39</span></div>
+      <div class="k9s-topbar"><span class="kk">Namespace:</span><span class="vv y">payments</span><span class="kk">Pod:</span><span class="vv b">payment-processor</span></div>
+      <div class="k9s-cmd">:pods <span>› payments ›</span> d:describe</div>
+      <div style="padding:8px 12px;font-size:10px;line-height:2;background:#1e1e2e">
+        <div><span style="color:#565f89">Name:      </span><span class="kc">payment-processor-66fd7c4f9-rhbt7</span></div>
+        <div><span style="color:#565f89">Namespace: </span><span class="ky">payments</span></div>
+        <div><span style="color:#565f89">Node:      </span><span style="color:#c0caf5">sce-lab-worker2</span></div>
+        <div><span style="color:#565f89">Status:    </span><span class="k9s-badge run">Running</span></div>
+        <div style="margin-top:4px"><span class="km">Security Context:</span></div>
+        <div style="padding-left:14px"><span style="color:#565f89">readOnlyRootFilesystem:   </span><span class="kg">true</span></div>
+        <div style="padding-left:14px"><span style="color:#565f89">allowPrivilegeEscalation: </span><span class="kg">false</span></div>
+        <div style="padding-left:14px"><span style="color:#565f89">runAsNonRoot:             </span><span class="kg">true</span></div>
+        <div style="padding-left:14px"><span style="color:#565f89">capabilities.drop:        </span><span class="kg">ALL</span></div>
+        <div style="padding-left:14px"><span style="color:#565f89">automountServiceAccountToken: </span><span class="kg">false</span></div>
+      </div>
+      <div class="k9s-finding"><span class="km">► CONTROL</span> — <span class="kr">touch /var/log/fake-audit.log → Read-only file system</span> · <span class="kr">mkdir /var/log/attacker → Read-only FS</span></div>
+      <div class="k9s-botbar"><b>a</b>:attach <b>l</b>:logs <b>s</b>:shell <b>?</b>:help</div>
+    </div>
+    <!-- k9s VIEW 6: netpol payments ES bloqueado -->
+    <div class="k9s-screen">
+      <div class="k9s-title">k9s — NetworkPolicies <span class="k9s-exp i">SCE-I-002</span><span>kind-sce-lab | 2026-04-09 15:16:39</span></div>
+      <div class="k9s-topbar"><span class="kk">Namespace:</span><span class="vv y">payments</span><span class="kk">ES acceso:</span><span class="vv r">BLOQUEADO</span></div>
+      <div class="k9s-cmd">:netpol <span>› payments</span></div>
+      <div class="k9s-thead k9s-np"><span>NAME</span><span>POD-SELECTOR</span><span>AGE</span></div>
+      <div class="k9s-row k9s-np sel"><span class="kr">default-deny-all</span><span style="color:#565f89">&lt;none&gt;</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-row k9s-np"><span class="kg">allow-dns-egress</span><span style="color:#565f89">&lt;none&gt;</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-row k9s-np"><span class="kg">allow-intra-namespace</span><span style="color:#565f89">&lt;none&gt;</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-row k9s-np"><span class="kg">allow-istiod-egress</span><span style="color:#565f89">&lt;none&gt;</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-row k9s-np"><span class="kg">allow-vault-egress</span><span style="color:#565f89">&lt;none&gt;</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-row k9s-np"><span class="kg">allow-postgres-egress</span><span class="kc">sce-lab/db-access=true</span><span style="color:#565f89">19d</span></div>
+      <div class="k9s-finding"><span class="km">► CONTROL</span> — ES:9200 <span class="kr">connection timed out</span> · No puede eliminar índices <span class="kr">fluentd-*</span> ni insertar registros falsos</div>
+      <div class="k9s-botbar"><b>d</b>:describe <b>e</b>:edit <b>?</b>:help</div>
+    </div>
   </div>
 
 </div>
@@ -894,8 +993,23 @@ function showTab(id) {
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
-  event.currentTarget.classList.add('active');
+  const btn = document.querySelector('[onclick*="' + id + '"]') || document.querySelector('.tab-btn');
+  if (btn) btn.classList.add('active');
 }
+// Auto-activate tab from URL hash
+function activateHashTab() {
+  const hash = location.hash.replace('#','');
+  if (hash) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    const pane = document.getElementById('tab-' + hash);
+    if (pane) pane.classList.add('active');
+    const btn = document.querySelector('[onclick*="' + hash + '"]');
+    if (btn) btn.classList.add('active');
+  }
+}
+window.addEventListener('load', activateHashTab);
+window.addEventListener('hashchange', activateHashTab);
 </script>
 </body>
 </html>
