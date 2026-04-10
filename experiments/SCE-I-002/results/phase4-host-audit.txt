@@ -1,7 +1,7 @@
 ═══ FASE 4: Acceso al audit log del host ═══
-Timestamp: 2026-03-21T13:44:24Z
+Timestamp: 2026-04-09T15:16:39Z
 Exit code: 0
-Duración: 113ms
+Duración: 159ms
 
 ─── Output ───
 === Intento 1: Leer audit log del host ===

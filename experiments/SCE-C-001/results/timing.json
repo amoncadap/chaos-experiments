@@ -1,10 +1,10 @@
 {
   "experiment": "SCE-C-001",
-  "timestamp": "2026-03-21T13:43:54Z",
+  "timestamp": "2026-04-09T15:14:07Z",
   "phases": {
-    "phase1_recon_ms": 95,
-    "phase2_sa_token_ms": 104,
-    "phase3_network_exfil_ms": 5157,
+    "phase1_recon_ms": 135,
+    "phase2_sa_token_ms": 137,
+    "phase3_network_exfil_ms": 5224,
     "phase4_dns_exfil_ms": 5147
   },
   "results": {

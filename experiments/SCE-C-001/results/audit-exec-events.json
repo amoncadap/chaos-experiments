@@ -1,9 +1,9 @@
 ═══ Evidencia Audit Log — kubectl exec en payments ═══
-Timestamp recolección: 2026-03-21T13:44:04Z
+Timestamp recolección: 2026-04-09T15:14:18Z
 Eventos encontrados: 5
 
 {
-  "timestamp": "2026-03-21T13:43:43.279215Z",
+  "timestamp": "2026-04-09T15:13:56.538357Z",
   "user": "kubernetes-admin",
   "verb": "get",
   "resource": "pods",
@@ -15,7 +15,7 @@ Eventos encontrados: 5
   "decision": "allow"
 }
 {
-  "timestamp": "2026-03-21T13:43:43.576365Z",
+  "timestamp": "2026-04-09T15:13:56.943607Z",
   "user": "kubernetes-admin",
   "verb": "get",
   "resource": "pods",
@@ -27,7 +27,7 @@ Eventos encontrados: 5
   "decision": "allow"
 }
 {
-  "timestamp": "2026-03-21T13:43:43.699341Z",
+  "timestamp": "2026-04-09T15:13:57.121828Z",
   "user": "kubernetes-admin",
   "verb": "get",
   "resource": "pods",
@@ -39,7 +39,7 @@ Eventos encontrados: 5
   "decision": "allow"
 }
 {
-  "timestamp": "2026-03-21T13:43:43.827954Z",
+  "timestamp": "2026-04-09T15:13:57.297248Z",
   "user": "kubernetes-admin",
   "verb": "get",
   "resource": "pods",
@@ -51,7 +51,7 @@ Eventos encontrados: 5
   "decision": "allow"
 }
 {
-  "timestamp": "2026-03-21T13:43:49.022113Z",
+  "timestamp": "2026-04-09T15:14:02.552612Z",
   "user": "kubernetes-admin",
   "verb": "get",
   "resource": "pods",

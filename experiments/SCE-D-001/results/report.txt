@@ -3,7 +3,7 @@
 ║        Agotamiento del IDP (fail-secure behavior)                  ║
 ╚══════════════════════════════════════════════════════════════════════╝
 
-Fecha de ejecución: 2026-03-21T13:49:09Z
+Fecha de ejecución: 2026-04-09T15:15:54Z
 Target:             users/auth-service (IDP) → users/user-api (dependiente)
 Método:             Scale auth-service a 0 réplicas
 
@@ -29,7 +29,7 @@ RESULTADOS POR FASE
 │ FASE 1 — Baseline (auth-service activo)                            │
 ├─────────────────────────────────────────────────────────────────────┤
 │ Disponibilidad:   100%                                       │
-│ Duración:         17972ms                                             │
+│ Duración:         18104ms                                             │
 │ Evidencia:        results/phase1-baseline.txt                      │
 │ Estado:           auth-service con réplica(s) Ready                │
 └─────────────────────────────────────────────────────────────────────┘
@@ -38,7 +38,7 @@ RESULTADOS POR FASE
 │ FASE 2 — Scale-to-zero (inyección)                                 │
 ├─────────────────────────────────────────────────────────────────────┤
 │ Acción:           kubectl scale deploy/auth-service --replicas=0   │
-│ Duración:         1717ms                                             │
+│ Duración:         1376ms                                             │
 │ Evidencia:        results/phase2-scale-zero.txt                    │
 │ Estado:           auth-service sin pods                             │
 └─────────────────────────────────────────────────────────────────────┘
@@ -47,7 +47,7 @@ RESULTADOS POR FASE
 │ FASE 3 — Ventana de cache (auth=0, cache potencialmente válido)    │
 ├─────────────────────────────────────────────────────────────────────┤
 │ Disponibilidad:   0%                                         │
-│ Duración:         35436ms                                             │
+│ Duración:         36969ms                                             │
 │ Evidencia:        results/phase3-cache-window.txt                  │
 │ Análisis:         Comportamiento durante TTL del JWT cache         │
 └─────────────────────────────────────────────────────────────────────┘
@@ -57,7 +57,7 @@ RESULTADOS POR FASE
 ├─────────────────────────────────────────────────────────────────────┤
 │ Disponibilidad:   0%                                       │
 │ Comportamiento:   fail-secure                                    │
-│ Duración:         17886ms                                             │
+│ Duración:         18392ms                                             │
 │ Evidencia:        results/phase4-post-cache.txt                    │
 └─────────────────────────────────────────────────────────────────────┘
 
@@ -84,7 +84,7 @@ CONTROLES DE SEGURIDAD EVALUADOS
 ├──────────────────────────────────┼────────────────┼────────────────────────┤
 │ Fail-secure (auth required)      │ fail-secure      │ phase4                 │
 │ JWT Cache (resiliencia temporal) │ cache=0%     │ phase3                 │
-│ K8s audit (scale events)         │ 20 eventos    │ audit-scale-events     │
+│ K8s audit (scale events)         │ 8 eventos    │ audit-scale-events     │
 │ Istio mTLS STRICT                │ activo         │ istio-proxy-errors     │
 │ Service mesh observabilidad      │ 9 errores   │ istio-proxy-errors     │
 │ Monitoreo errores user-api       │ 0

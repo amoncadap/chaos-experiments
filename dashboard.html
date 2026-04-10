@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCE Lab — Resultados de Experimentos</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg2: #161b22;
+      --bg3: #21262d;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --c-conf: #e05c5c;
+      --c-avail: #5c9ee0;
+      --c-integ: #3fb950;
+      --c-warn: #d29922;
+      --c-ok: #3fb950;
+      --c-fail: #f85149;
+      --c-na: #8b949e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; }
+
+    /* HEADER */
+    .header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; gap: 16px; }
+    .header h1 { font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
+    .header .subtitle { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
+    .badge-cia { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 12px; letter-spacing: 1px; }
+
+    /* TABS */
+    .tabs { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; gap: 0; }
+    .tab-btn { padding: 12px 20px; border: none; background: none; color: var(--text-muted); cursor: pointer; font-size: 13px; font-weight: 500; border-bottom: 2px solid transparent; transition: all .15s; }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--text); border-bottom-color: #58a6ff; }
+    .tab-btn .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+
+    /* CONTENT */
+    .tab-pane { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
+    .tab-pane.active { display: block; }
+
+    /* EXPERIMENT HEADER */
+    .exp-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; padding: 20px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; }
+    .exp-header-left h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .exp-header-left .desc { color: var(--text-muted); font-size: 13px; }
+    .exp-header-left .meta { margin-top: 10px; display: flex; gap: 16px; flex-wrap: wrap; }
+    .meta-item { font-size: 12px; color: var(--text-muted); }
+    .meta-item strong { color: var(--text); }
+    .verdict-banner { text-align: center; padding: 12px 20px; border-radius: 8px; font-weight: 700; font-size: 14px; min-width: 160px; }
+    .verdict-confirmed { background: rgba(63,185,80,.15); border: 1px solid var(--c-ok); color: var(--c-ok); }
+    .verdict-finding { background: rgba(248,81,73,.15); border: 1px solid var(--c-fail); color: var(--c-fail); }
+    .verdict-partial { background: rgba(210,153,34,.15); border: 1px solid var(--c-warn); color: var(--c-warn); }
+
+    /* GRID */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+    @media (max-width: 800px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; } }
+
+    /* CARDS */
+    .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .card h3 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; }
+    .stat-card { text-align: center; }
+    .stat-card .value { font-size: 28px; font-weight: 700; }
+    .stat-card .label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+    /* BADGES */
+    .badge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .result-badge { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; }
+    .badge-ok { background: rgba(63,185,80,.1); border: 1px solid rgba(63,185,80,.3); color: var(--c-ok); }
+    .badge-fail { background: rgba(248,81,73,.1); border: 1px solid rgba(248,81,73,.3); color: var(--c-fail); }
+    .badge-warn { background: rgba(210,153,34,.1); border: 1px solid rgba(210,153,34,.3); color: var(--c-warn); }
+    .badge-icon { font-size: 16px; }
+
+    /* CALLOUT */
+    .callout { padding: 12px 16px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; }
+    .callout-warn { background: rgba(210,153,34,.1); border-left: 3px solid var(--c-warn); }
+    .callout-ok { background: rgba(63,185,80,.1); border-left: 3px solid var(--c-ok); }
+    .callout-fail { background: rgba(248,81,73,.1); border-left: 3px solid var(--c-fail); }
+    .callout-info { background: rgba(88,166,255,.1); border-left: 3px solid #58a6ff; }
+    .callout strong { display: block; margin-bottom: 4px; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; margin-bottom: 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: var(--bg3); color: var(--text-muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    .pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; letter-spacing: .5px; }
+    .pill-ok { background: rgba(63,185,80,.15); color: var(--c-ok); }
+    .pill-warn { background: rgba(210,153,34,.15); color: var(--c-warn); }
+    .pill-fail { background: rgba(248,81,73,.15); color: var(--c-fail); }
+    .pill-na { background: rgba(139,148,158,.15); color: var(--c-na); }
+
+    /* CHART */
+    .chart-container { position: relative; height: 220px; }
+    .chart-container-lg { position: relative; height: 280px; }
+
+    /* DETAILS */
+    details { margin-bottom: 8px; }
+    summary { cursor: pointer; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-weight: 500; user-select: none; list-style: none; display: flex; align-items: center; gap: 8px; }
+    summary::before { content: '▶'; font-size: 10px; color: var(--text-muted); transition: transform .15s; }
+    details[open] summary::before { transform: rotate(90deg); }
+    .details-content { padding: 12px; background: var(--bg); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; }
+    pre.evidence { font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 12px; line-height: 1.6; color: #cdd9e5; white-space: pre-wrap; word-break: break-word; }
+    pre.report { font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 11.5px; line-height: 1.65; color: #cdd9e5; white-space: pre; overflow-x: auto; }
+
+    /* TIMELINE */
+    .timeline { list-style: none; padding: 0; }
+    .timeline li { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .timeline li:last-child { border-bottom: none; }
+    .tl-time { color: var(--text-muted); white-space: nowrap; min-width: 90px; font-family: monospace; }
+    .tl-user { color: #58a6ff; white-space: nowrap; min-width: 120px; }
+    .tl-admin { color: var(--c-fail); }
+    .tl-action { color: var(--text-muted); }
+
+    /* MITRE */
+    .mitre-card { display: flex; gap: 16px; flex-wrap: wrap; }
+    .mitre-item { flex: 1; min-width: 160px; }
+    .mitre-item .mitre-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 4px; }
+    .mitre-item .mitre-value { font-size: 13px; font-weight: 500; color: #58a6ff; }
+    .mitre-item .mitre-code { font-size: 11px; color: var(--text-muted); font-family: monospace; margin-top: 2px; }
+
+    /* SECTION LABEL */
+    .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 20px 0 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+
+    /* K9S PLACEHOLDER */
+    .k9s-placeholder { background: var(--bg3); border: 1px dashed var(--border); border-radius: 8px; padding: 32px; text-align: center; color: var(--text-muted); }
+    .k9s-placeholder .icon { font-size: 32px; margin-bottom: 8px; }
+    .k9s-placeholder .k9s-desc { font-size: 12px; margin-top: 6px; }
+
+    /* SUMMARY */
+    .summary-table td:first-child { font-weight: 600; font-family: monospace; font-size: 13px; }
+    .big-fail-secure { font-size: 42px; font-weight: 800; color: var(--c-ok); text-align: center; padding: 20px 0; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>SCE Lab — Experimentos de Chaos Engineering</h1>
+    <div class="subtitle">Seguridad en Contenedores y Kubernetes · UBA CESI 2025-1</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('c001')">
+    <span class="dot" style="background:var(--c-conf)"></span>SCE-C-001
+  </button>
+  <button class="tab-btn" onclick="showTab('d001')">
+    <span class="dot" style="background:var(--c-avail)"></span>SCE-D-001
+  </button>
+  <button class="tab-btn" onclick="showTab('i002')">
+    <span class="dot" style="background:var(--c-integ)"></span>SCE-I-002
+  </button>
+  <button class="tab-btn" onclick="showTab('summary')">
+    <span class="dot" style="background:#8b949e"></span>Resumen
+  </button>
+</div>
+
+<!-- ═══════════════════════════════ SCE-C-001 ═══════════════════════════════ -->
+<div id="tab-c001" class="tab-pane active">
+
+  <div class="exp-header">
+    <div class="exp-header-left">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+        <span class="badge-cia" style="background:rgba(224,92,92,.2);color:var(--c-conf);border:1px solid rgba(224,92,92,.4)">CONFIDENCIALIDAD</span>
+      </div>
+      <h2 style="color:var(--c-conf)">SCE-C-001 — Exfiltración de Credenciales</h2>
+      <div class="desc">Credenciales expuestas como env vars en pod comprometido</div>
+      <div class="meta">
+        <div class="meta-item"><strong>Fecha:</strong> 2026-03-21T13:44:04Z</div>
+        <div class="meta-item"><strong>Target:</strong> payments/payment-processor</div>
+        <div class="meta-item"><strong>Imagen:</strong> curlimages/curl:latest</div>
+      </div>
+    </div>
+    <div>
+      <div class="verdict-finding">
+        ⚠ HALLAZGO CONFIRMADO<br>
+        <span style="font-size:11px;font-weight:400;opacity:.8">Credenciales expuestas</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-fail">
+    <strong>Hallazgo Principal</strong>
+    3 credenciales encontradas como variables de entorno: <code>DB_PASSWORD</code>, <code>API_KEY</code>, <code>STRIPE_KEY</code>. Cualquier proceso con acceso al pod puede leerlas trivialmente.
+  </div>
+
+  <div class="grid-4">
+    <div class="card stat-card">
+      <div class="value" style="color:var(--c-fail)">3</div>
+      <div class="label">Credenciales Expuestas</div>
+    </div>
+    <div class="card stat-card">
+      <div class="value" style="color:var(--c-ok)">2</div>
+      <div class="label">Rutas Egress Bloqueadas</div>
+    </div>
+    <div class="card stat-card">
+      <div class="value" style="color:var(--text-muted)">0</div>
+      <div class="label">Alertas Falco</div>
+    </div>
+    <div class="card stat-card">
+      <div class="value" style="color:var(--c-warn)">5</div>
+      <div class="label">Eventos Audit K8s</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Duración por Fase</h3>
+      <div class="chart-container">
+        <canvas id="c001-timing"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Resultados por Fase</h3>
+      <div class="badge-grid" style="margin-top:8px;">
+        <div class="result-badge badge-fail"><span class="badge-icon">✕</span>SA Token Accesible</div>
+        <div class="result-badge badge-ok"><span class="badge-icon">✓</span>Egress Bloqueado</div>
+        <div class="result-badge badge-ok"><span class="badge-icon">✓</span>DNS Exfil Bloqueada</div>
+        <div class="result-badge badge-ok"><span class="badge-icon">✓</span>automountSAToken: false</div>
+        <div class="result-badge badge-warn" style="grid-column:span 2"><span class="badge-icon">⚠</span>3 Credenciales en Env Vars (VULNERABLE)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Controles de Seguridad Evaluados</div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Control</th><th>Resultado</th><th>Evidencia</th></tr></thead>
+        <tbody>
+          <tr><td>NetworkPolicy default-deny-all</td><td><span class="pill pill-ok">EFECTIVO</span></td><td>phase3, phase4</td></tr>
+          <tr><td>Falco runtime detection</td><td><span class="pill pill-na">0 alertas *</span></td><td>falco-alerts.json</td></tr>
+          <tr><td>K8s audit logging</td><td><span class="pill pill-warn">5 eventos</span></td><td>audit-exec-events.json</td></tr>
+          <tr><td>automountServiceAccountToken: false</td><td><span class="pill pill-ok">EFECTIVO</span></td><td>phase2-sa-token.txt</td></tr>
+          <tr><td>Vault Agent Injector (vs env vars)</td><td><span class="pill pill-na">N/A — comparar</span></td><td>payment-api.yaml</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+      * Falco no generó alertas porque los kubectl exec se ejecutaron desde fuera del pod. Falco monitorea syscalls dentro del contenedor.
+    </div>
+  </div>
+
+  <div class="section-title">Audit Log — Eventos kubectl exec</div>
+  <div class="card" style="margin-bottom:16px;">
+    <ul class="timeline" id="c001-audit"></ul>
+  </div>
+
+  <div class="section-title">MITRE ATT&CK</div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="mitre-card">
+      <div class="mitre-item">
+        <div class="mitre-label">Táctica</div>
+        <div class="mitre-value">Credential Access</div>
+        <div class="mitre-code">TA0006</div>
+      </div>
+      <div class="mitre-item">
+        <div class="mitre-label">Técnica</div>
+        <div class="mitre-value">Unsecured Credentials: Credentials in Files</div>
+        <div class="mitre-code">T1552.001</div>
+      </div>
+      <div class="mitre-item">
+        <div class="mitre-label">Sub-técnica</div>
+        <div class="mitre-value">Container Environment Variables</div>
+      </div>
+      <div class="mitre-item">
+        <div class="mitre-label">Plataforma</div>
+        <div class="mitre-value">Containers (Kubernetes)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Evidencia por Fase</div>
+  <details>
+    <summary><span style="color:var(--c-fail)">Fase 1</span> — Reconocimiento de credenciales (95ms)</summary>
+    <div class="details-content"><pre class="evidence" id="c001-p1"></pre></div>
+  </details>
+  <details>
+    <summary><span style="color:var(--c-ok)">Fase 2</span> — Lectura del ServiceAccount token (104ms)</summary>
+    <div class="details-content"><pre class="evidence" id="c001-p2"></pre></div>
+  </details>
+  <details>
+    <summary><span style="color:var(--c-ok)">Fase 3</span> — Exfiltración por red (5157ms)</summary>
+    <div class="details-content"><pre class="evidence" id="c001-p3"></pre></div>
+  </details>
+  <details>
+    <summary><span style="color:var(--c-ok)">Fase 4</span> — Exfiltración por DNS (5147ms)</summary>
+    <div class="details-content"><pre class="evidence" id="c001-p4"></pre></div>
+  </details>
+  <details style="margin-top:8px;">
+    <summary>📄 Reporte completo (report.txt)</summary>
+    <div class="details-content"><pre class="report" id="c001-report"></pre></div>
+  </details>
+
+  <div class="section-title">k9s — Capturas de Pantalla del Cluster</div>
+  <div class="k9s-placeholder">
+    <div class="icon">🖥</div>
+    <div>Las capturas de k9s se guardarán aquí durante la ejecución del experimento</div>
+    <div class="k9s-desc">Vistas: Pods (baseline) · Events (inyección) · Logs del pod objetivo · Pods (rollback)</div>
+    <div class="k9s-desc" style="margin-top:8px;font-family:monospace">experiments/SCE-C-001/results/k9s-screenshots/</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════ SCE-D-001 ═══════════════════════════════ -->
+<div id="tab-d001" class="tab-pane">
+
+  <div class="exp-header">
+    <div class="exp-header-left">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+        <span class="badge-cia" style="background:rgba(92,158,224,.2);color:var(--c-avail);border:1px solid rgba(92,158,224,.4)">DISPONIBILIDAD</span>
+      </div>
+      <h2 style="color:var(--c-avail)">SCE-D-001 — Agotamiento del IDP</h2>
+      <div class="desc">Comportamiento fail-secure cuando el servicio de autenticación cae</div>
+      <div class="meta">
+        <div class="meta-item"><strong>Fecha:</strong> 2026-03-21T13:49:09Z</div>
+        <div class="meta-item"><strong>Target:</strong> users/auth-service → users/user-api</div>
+        <div class="meta-item"><strong>Método:</strong> kubectl scale --replicas=0</div>
+      </div>
+    </div>
+    <div>
+      <div class="verdict-confirmed">
+        ✓ HIPÓTESIS CONFIRMADA<br>
+        <span style="font-size:11px;font-weight:400;opacity:.8">Comportamiento fail-secure</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-ok">
+    <strong>Veredicto: FAIL-SECURE CONFIRMADO</strong>
+    Sin IDP, el sistema rechaza todas las requests en lugar de permitir acceso no autenticado. La seguridad se mantiene a costa de la disponibilidad.
+  </div>
+
+  <div class="grid-4">
+    <div class="card stat-card">
+      <div class="value" style="color:var(--c-ok)">100%</div>
+      <div class="label">Disponibilidad Baseline</div>
+    </div>
+    <div class="card stat-card">
+      <div class="value" style="color:var(--c-fail)">0%</div>
+      <div class="label">Disponibilidad con IDP=0</div>
+    </div>
+    <div class="card stat-card">
+      <div class="value" style="color:var(--c-warn)">20</div>
+      <div class="label">Eventos Audit (scale)</div>
+    </div>
+    <div class="card stat-card">
+      <div class="value" style="color:var(--c-avail)">fail-secure</div>
+      <div class="label">Comportamiento</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Duración por Fase</h3>
+      <div class="chart-container">
+        <canvas id="d001-timing"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Curva de Disponibilidad</h3>
+      <div class="chart-container">
+        <canvas id="d001-avail"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Controles de Seguridad Evaluados</div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Control</th><th>Resultado</th><th>Evidencia</th></tr></thead>
+        <tbody>
+          <tr><td>Fail-secure (auth requerida)</td><td><span class="pill pill-ok">CONFIRMADO</span></td><td>phase4-post-cache.txt</td></tr>
+          <tr><td>JWT Cache (resiliencia temporal)</td><td><span class="pill pill-warn">cache=0%</span></td><td>phase3-cache-window.txt</td></tr>
+          <tr><td>K8s audit (scale events)</td><td><span class="pill pill-warn">20 eventos</span></td><td>audit-scale-events.json</td></tr>
+          <tr><td>Istio mTLS STRICT</td><td><span class="pill pill-ok">ACTIVO</span></td><td>istio-proxy-errors.txt</td></tr>
+          <tr><td>Service mesh observabilidad</td><td><span class="pill pill-warn">503 errors</span></td><td>istio-proxy-errors.txt</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">Audit Log — Eventos de Scale</div>
+  <div class="card" style="margin-bottom:16px;">
+    <ul class="timeline" id="d001-audit"></ul>
+  </div>
+
+  <div class="section-title">MITRE ATT&CK</div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="mitre-card">
+      <div class="mitre-item">
+        <div class="mitre-label">Táctica</div>
+        <div class="mitre-value">Impact</div>
+        <div class="mitre-code">TA0040</div>
+      </div>
+      <div class="mitre-item">
+        <div class="mitre-label">Técnica</div>
+        <div class="mitre-value">Endpoint Denial of Service</div>
+        <div class="mitre-code">T1499</div>
+      </div>
+      <div class="mitre-item">
+        <div class="mitre-label">Sub-técnica</div>
+        <div class="mitre-value">Service Exhaustion Flood</div>
+        <div class="mitre-code">T1499.002</div>
+      </div>
+      <div class="mitre-item">
+        <div class="mitre-label">Plataforma</div>
+        <div class="mitre-value">Containers (Kubernetes)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Evidencia por Fase</div>
+  <details>
+    <summary><span style="color:var(--c-ok)">Fase 1</span> — Baseline: auth-service activo (17972ms)</summary>
+    <div class="details-content"><pre class="evidence" id="d001-p1"></pre></div>
+  </details>
+  <details>
+    <summary><span style="color:var(--c-warn)">Fase 2</span> — Scale-to-zero: inyección (1717ms)</summary>
+    <div class="details-content"><pre class="evidence" id="d001-p2"></pre></div>
+  </details>
+  <details>
+    <summary><span style="color:var(--c-fail)">Fase 3</span> — Ventana de cache (35436ms)</summary>
+    <div class="details-content"><pre class="evidence" id="d001-p3"></pre></div>
+  </details>
+  <details>
+    <summary><span style="color:var(--c-fail)">Fase 4</span> — Post-cache: fail-secure (17886ms)</summary>
+    <div class="details-content"><pre class="evidence" id="d001-p4"></pre></div>
+  </details>
+  <details style="margin-top:8px;">
+    <summary>📄 Reporte completo (report.txt)</summary>
+    <div class="details-content"><pre class="report" id="d001-report"></pre></div>
+  </details>
+
+  <div class="section-title">k9s — Capturas de Pantalla del Cluster</div>
+  <div class="k9s-placeholder">
+    <div class="icon">🖥</div>
+    <div>Las capturas de k9s se guardarán aquí durante la ejecución del experimento</div>
+    <div class="k9s-desc">Vistas: Pods (baseline) · Deployments (scale-to-zero) · Events (K8s events) · Pods (rollback)</div>
+    <div class="k9s-desc" style="margin-top:8px;font-family:monospace">experiments/SCE-D-001/results/k9s-screenshots/</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════ SCE-I-002 ═══════════════════════════════ -->
+<div id="tab-i002" class="tab-pane">
+
+  <div class="exp-header">
+    <div class="exp-header-left">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+        <span class="badge-cia" style="background:rgba(63,185,80,.2);color:var(--c-integ);border:1px solid rgba(63,185,80,.4)">INTEGRIDAD</span>
+      </div>
+      <h2 style="color:var(--c-integ)">SCE-I-002 — Corrupción de Registros de Auditoría</h2>
+      <div class="desc">Intentos de modificar/eliminar logs de auditoría desde un pod comprometido</div>
+      <div class="meta">
+        <div class="meta-item"><strong>Fecha:</strong> 2026-03-21T13:44:35Z</div>
+        <div class="meta-item"><strong>Target:</strong> payments/payment-processor</div>
+        <div class="meta-item"><strong>Imagen:</strong> curlimages/curl:latest</div>
+      </div>
+    </div>
+    <div>
+      <div class="verdict-confirmed">
+        ✓ HIPÓTESIS CONFIRMADA<br>
+        <span style="font-size:11px;font-weight:400;opacity:.8">Logs protegidos</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-ok">
+    <strong>Resultado: Integridad de Logs PROTEGIDA</strong>
+    Los registros de auditoría están protegidos por múltiples capas. Un atacante en un pod NO puede eliminar ni modificar registros existentes.
+  </div>
+  <div class="callout callout-warn">
+    <strong>Hallazgo Secundario (Riesgo Bajo): Log Injection posible via stdout</strong>
+    Un atacante puede inyectar registros falsos en stdout del contenedor, que llegarán a Fluentd → Elasticsearch. No puede eliminar los existentes, solo agregar ruido.
+  </div>
+
+  <div class="grid-4">
+    <div class="card stat-card">
+      <div class="value" style="color:var(--c-integ)">1</div>
+      <div class="label">Índice Elasticsearch</div>
+    </div>
+    <div class="card stat-card">
+      <div class="value" style="color:var(--c-integ)">3,734</div>
+      <div class="label">Documentos (append-only)</div>
+    </div>
+    <div class="card stat-card">
+      <div class="value" style="color:var(--c-ok)">0</div>
+      <div class="label">Documentos Eliminados</div>
+    </div>
+    <div class="card stat-card">
+      <div class="value" style="color:var(--c-warn)">9</div>
+      <div class="label">Eventos Audit K8s</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Duración por Fase</h3>
+      <div class="chart-container">
+        <canvas id="i002-timing"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Resultados por Fase</h3>
+      <div class="badge-grid" style="margin-top:8px;">
+        <div class="result-badge badge-ok"><span class="badge-icon">✓</span>Escritura /var/log Bloqueada</div>
+        <div class="result-badge badge-warn"><span class="badge-icon">⚠</span>stdout Tamper Posible</div>
+        <div class="result-badge badge-ok"><span class="badge-icon">✓</span>Acceso ES Bloqueado</div>
+        <div class="result-badge badge-ok"><span class="badge-icon">✓</span>Acceso Host Audit Bloqueado</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Controles de Seguridad Evaluados</div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Control</th><th>Resultado</th><th>Evidencia</th></tr></thead>
+        <tbody>
+          <tr><td>readOnlyRootFilesystem</td><td><span class="pill pill-ok">EFECTIVO</span></td><td>phase1-varlog-write.txt</td></tr>
+          <tr><td>NetworkPolicy → ES bloqueada</td><td><span class="pill pill-ok">EFECTIVO</span></td><td>phase3-es-access.txt</td></tr>
+          <tr><td>Aislamiento audit log (host)</td><td><span class="pill pill-ok">EFECTIVO</span></td><td>phase4-host-audit.txt</td></tr>
+          <tr><td>allowPrivilegeEscalation: false</td><td><span class="pill pill-ok">EFECTIVO</span></td><td>phase4-host-audit.txt</td></tr>
+          <tr><td>Falco detection (SCE-I-002)</td><td><span class="pill pill-na">0 alertas *</span></td><td>falco-alerts.json</td></tr>
+          <tr><td>K8s audit logging</td><td><span class="pill pill-warn">9 eventos</span></td><td>audit-exec-events.json</td></tr>
+          <tr><td>Integridad ES (append-only)</td><td><span class="pill pill-ok">EFECTIVO</span></td><td>elasticsearch-integrity.json</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+      * readOnlyRootFilesystem bloqueó el intento ANTES de que el syscall open() se ejecute. Falco no genera alerta porque el kernel rechaza antes del evento. Esto es POSITIVO: el control preventivo actúa primero.
+    </div>
+  </div>
+
+  <div class="section-title">Elasticsearch — Estado de Integridad</div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="grid-3">
+      <div class="stat-card" style="text-align:left;padding:0;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Índice</div>
+        <div style="font-family:monospace;font-size:12px;color:#58a6ff;">fluentd-2026.03.21</div>
+      </div>
+      <div class="stat-card" style="text-align:left;padding:0;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Health / Status</div>
+        <div><span class="pill pill-warn">yellow</span> <span class="pill pill-ok">open</span></div>
+      </div>
+      <div class="stat-card" style="text-align:left;padding:0;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Almacenamiento</div>
+        <div style="font-size:13px;">2 MB · 1 shard primario</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted)">
+      Los índices son append-only desde Fluentd. Un atacante dentro de un pod de aplicación no puede eliminar ni modificar documentos existentes porque NetworkPolicy bloquea la conexión al namespace logging.
+    </div>
+  </div>
+
+  <div class="section-title">MITRE ATT&CK</div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="mitre-card">
+      <div class="mitre-item">
+        <div class="mitre-label">Táctica</div>
+        <div class="mitre-value">Defense Evasion</div>
+        <div class="mitre-code">TA0005</div>
+      </div>
+      <div class="mitre-item">
+        <div class="mitre-label">Técnica</div>
+        <div class="mitre-value">Impair Defenses: Disable or Modify Cloud Logs</div>
+        <div class="mitre-code">T1562.008</div>
+      </div>
+      <div class="mitre-item">
+        <div class="mitre-label">Sub-técnica</div>
+        <div class="mitre-value">Indicator Removal: Clear Linux/Mac System Logs</div>
+        <div class="mitre-code">T1070.002</div>
+      </div>
+      <div class="mitre-item">
+        <div class="mitre-label">Plataforma</div>
+        <div class="mitre-value">Containers (Kubernetes)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Evidencia por Fase</div>
+  <details>
+    <summary><span style="color:var(--c-ok)">Fase 1</span> — Escritura en /var/log/ (103ms)</summary>
+    <div class="details-content"><pre class="evidence" id="i002-p1"></pre></div>
+  </details>
+  <details>
+    <summary><span style="color:var(--c-warn)">Fase 2</span> — Inyección stdout/stderr (124ms)</summary>
+    <div class="details-content"><pre class="evidence" id="i002-p2"></pre></div>
+  </details>
+  <details>
+    <summary><span style="color:var(--c-ok)">Fase 3</span> — Acceso directo a Elasticsearch (15152ms)</summary>
+    <div class="details-content"><pre class="evidence" id="i002-p3"></pre></div>
+  </details>
+  <details>
+    <summary><span style="color:var(--c-ok)">Fase 4</span> — Acceso al audit log del host (113ms)</summary>
+    <div class="details-content"><pre class="evidence" id="i002-p4"></pre></div>
+  </details>
+  <details style="margin-top:8px;">
+    <summary>📄 Reporte completo (report.txt)</summary>
+    <div class="details-content"><pre class="report" id="i002-report"></pre></div>
+  </details>
+
+  <div class="section-title">k9s — Capturas de Pantalla del Cluster</div>
+  <div class="k9s-placeholder">
+    <div class="icon">🖥</div>
+    <div>Las capturas de k9s se guardarán aquí durante la ejecución del experimento</div>
+    <div class="k9s-desc">Vistas: Pods (baseline) · Events (inyección) · Logs del pod objetivo · Pods (rollback)</div>
+    <div class="k9s-desc" style="margin-top:8px;font-family:monospace">experiments/SCE-I-002/results/k9s-screenshots/</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════ RESUMEN ═══════════════════════════════ -->
+<div id="tab-summary" class="tab-pane">
+
+  <div class="section-title" style="margin-top:0">Resumen de Experimentos</div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="table-wrap">
+      <table class="summary-table">
+        <thead>
+          <tr><th>ID</th><th>Categoría</th><th>Fecha</th><th>Target</th><th>Hipótesis</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--c-conf)">SCE-C-001</td>
+            <td><span class="pill" style="background:rgba(224,92,92,.15);color:var(--c-conf)">Confidencialidad</span></td>
+            <td style="font-family:monospace;font-size:12px">2026-03-21</td>
+            <td style="font-size:12px">payments/payment-processor</td>
+            <td><span class="pill pill-warn">HALLAZGO (credenciales expuestas)</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--c-avail)">SCE-D-001</td>
+            <td><span class="pill" style="background:rgba(92,158,224,.15);color:var(--c-avail)">Disponibilidad</span></td>
+            <td style="font-family:monospace;font-size:12px">2026-03-21</td>
+            <td style="font-size:12px">users/auth-service</td>
+            <td><span class="pill pill-ok">CONFIRMADA (fail-secure)</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--c-integ)">SCE-I-002</td>
+            <td><span class="pill" style="background:rgba(63,185,80,.15);color:var(--c-integ)">Integridad</span></td>
+            <td style="font-family:monospace;font-size:12px">2026-03-21</td>
+            <td style="font-size:12px">payments/payment-processor</td>
+            <td><span class="pill pill-ok">CONFIRMADA (logs protegidos)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card" style="border-color:rgba(224,92,92,.4)">
+      <h3 style="color:var(--c-conf)">SCE-C-001</h3>
+      <div style="font-size:13px;margin-bottom:12px;">Exfiltración de Credenciales</div>
+      <div class="result-badge badge-fail" style="margin-bottom:8px;"><span class="badge-icon">⚠</span>3 credenciales expuestas</div>
+      <div class="result-badge badge-ok"><span class="badge-icon">✓</span>Egress bloqueado por NetworkPolicy</div>
+    </div>
+    <div class="card" style="border-color:rgba(92,158,224,.4)">
+      <h3 style="color:var(--c-avail)">SCE-D-001</h3>
+      <div style="font-size:13px;margin-bottom:12px;">Agotamiento del IDP</div>
+      <div class="result-badge badge-ok" style="margin-bottom:8px;"><span class="badge-icon">✓</span>Fail-secure confirmado</div>
+      <div class="result-badge badge-warn"><span class="badge-icon">⚠</span>JWT cache sin efecto (0%)</div>
+    </div>
+    <div class="card" style="border-color:rgba(63,185,80,.4)">
+      <h3 style="color:var(--c-integ)">SCE-I-002</h3>
+      <div style="font-size:13px;margin-bottom:12px;">Corrupción de Logs</div>
+      <div class="result-badge badge-ok" style="margin-bottom:8px;"><span class="badge-icon">✓</span>Logs de auditoría protegidos</div>
+      <div class="result-badge badge-warn"><span class="badge-icon">⚠</span>Log injection via stdout posible</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Duración de Fases — Comparativa</h3>
+      <div class="chart-container-lg">
+        <canvas id="summary-timing"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Controles Efectivos por Experimento</h3>
+      <div class="chart-container-lg">
+        <canvas id="summary-radar"></canvas>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════ DATA ═══════════════════════
+
+const DATA = {
+  c001: {
+    timing: { labels: ['F1 Reconocimiento', 'F2 SA Token', 'F3 Egress HTTP', 'F4 DNS Exfil'], values: [95, 104, 5157, 5147] },
+    color: '#e05c5c',
+    auditEvents: [
+      { ts: '13:43:43.279', user: 'kubernetes-admin', action: 'exec env (reconocimiento)' },
+      { ts: '13:43:43.576', user: 'kubernetes-admin', action: 'exec env (reconocimiento #2)' },
+      { ts: '13:43:43.699', user: 'kubernetes-admin', action: 'exec cat /run/secrets/.../token' },
+      { ts: '13:43:43.827', user: 'kubernetes-admin', action: 'exec curl 1.1.1.1 (egress)' },
+      { ts: '13:43:49.022', user: 'kubernetes-admin', action: 'exec curl ifconfig.me (DNS exfil)' },
+    ],
+    phases: {
+      p1: `\u2550\u2550\u2550 FASE 1: Reconocimiento de credenciales \u2550\u2550\u2550\nTimestamp: 2026-03-21T13:43:43Z\nComando: kubectl exec -n payments deploy/payment-processor -c payment-processor -- env\nExit code: 0\nDuración: 95ms\n\n─── Credenciales encontradas ───\nDB_PASSWORD=super-secret-db-password-lab-only\nAPI_KEY=api-key-that-should-be-in-vault\nSTRIPE_KEY=sk_test_lab_key_not_real\n\nRESULTADO: HALLAZGO CONFIRMADO — Credenciales visibles como env vars\nIMPACTO: Un atacante con acceso al pod puede leer DB_PASSWORD, API_KEY, STRIPE_KEY`,
+      p2: `\u2550\u2550\u2550 FASE 2: Lectura del ServiceAccount token \u2550\u2550\u2550\nTimestamp: 2026-03-21T13:43:43Z\nComando: kubectl exec → cat /run/secrets/.../token\nExit code: 1\nDuración: 104ms\n\n─── Output ───\ncat: can't open '/run/secrets/kubernetes.io/serviceaccount/token': No such file or directory\ncommand terminated with exit code 1\n\nRESULTADO: TOKEN NO ACCESIBLE — automountServiceAccountToken deshabilitado\nCONTROL EFECTIVO: El pod no monta el token del SA por defecto`,
+      p3: `\u2550\u2550\u2550 FASE 3: Exfiltración por red (egress externo) \u2550\u2550\u2550\nTimestamp: 2026-03-21T13:43:48Z\nComando: curl -sf --max-time 5 http://1.1.1.1/\nExit code: 28\nDuración: 5157ms\n\n─── Output ───\ncommand terminated with exit code 28\n\nRESULTADO: EGRESS BLOQUEADO — NetworkPolicy default-deny-all efectiva\nCONTROL EFECTIVO: El atacante no puede enviar credenciales a un servidor externo`,
+      p4: `\u2550\u2550\u2550 FASE 4: Exfiltración por DNS \u2550\u2550\u2550\nTimestamp: 2026-03-21T13:43:54Z\nComando: curl -sf --max-time 5 http://ifconfig.me\nExit code: 28\nDuración: 5147ms\n\n─── Output ───\ncommand terminated with exit code 28\n\nRESULTADO: DNS EXFILTRACIÓN BLOQUEADA\nCONTROL EFECTIVO: La resolución DNS externa y/o egress HTTP bloqueados`,
+    },
+    report: `\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n\u2551             SCE-C-001 \u2014 REPORTE DE EXPERIMENTO                     \u2551\n\u2551        Exfiltración de credenciales desde pod comprometido         \u2551\n\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\nFecha de ejecución: 2026-03-21T13:44:04Z\nTarget:             payments/payment-processor\nImagen:             curlimages/curl:latest\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\nHIPÓTESIS\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\nLas credenciales expuestas como variables de entorno en payment-processor\npueden ser leídas trivialmente por un atacante con acceso al pod, pero\nla exfiltración a destinos externos es bloqueada por NetworkPolicy y\nel acceso es detectado por Falco y registrado en el audit log de K8s.\n\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\nRESULTADOS POR FASE\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n│ FASE 1 \u2014 Reconocimiento de credenciales                           │\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n│ Resultado:    HALLAZGO CONFIRMADO                                  │\n│ Credenciales: 3 encontradas (DB_PASSWORD, API_KEY, STRIPE_KEY) │\n│ Duración:     95ms                                              │\n│ Evidencia:    results/phase1-recon.txt                             │\n│ Impacto:      Un atacante con exec puede leer secretos directamente│\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n\nCONTROLES: NetworkPolicy EFECTIVO · SA Token BLOQUEADO · Audit: 5 eventos\n\nMITRE ATT&CK: TA0006 · T1552.001 · Container Environment Variables`,
+  },
+  d001: {
+    timing: { labels: ['F1 Baseline', 'F2 Scale-zero', 'F3 Cache window', 'F4 Post-cache'], values: [17972, 1717, 35436, 17886] },
+    color: '#5c9ee0',
+    auditEvents: [
+      { ts: '13:44:59.018', user: 'kubernetes-admin', action: 'patch auth-service scale (→0)', admin: true },
+      { ts: '13:45:53.167', user: 'kubernetes-admin', action: 'patch auth-service scale (→1)', admin: true },
+      { ts: '13:48:08.583', user: 'kubernetes-admin', action: 'patch auth-service scale (→0)', admin: true },
+      { ts: '13:29:57.918', user: 'deployment-controller', action: 'update user-api status' },
+      { ts: '13:30:10.505', user: 'deployment-controller', action: 'update auth-service status' },
+    ],
+    phases: {
+      p1: `\u2550\u2550\u2550 FASE 1: Baseline \u2014 auth-service activo \u2550\u2550\u2550\nTimestamp: 2026-03-21T13:47:50Z\nauth-service replicas: 1\n\n─── Mediciones: Baseline (15s, cada 5s) ───\n  [13:47:50] +0s   HTTP 200  OK\n  [13:47:56] +5s   HTTP 200  OK\n  [13:48:02] +10s  HTTP 200  OK\n\n  Total: 3 requests | OK: 3 | FAIL: 0\n  Disponibilidad: 100%\n\nRESULTADO: Disponibilidad baseline: 100%`,
+      p2: `\u2550\u2550\u2550 FASE 2: Scale-to-zero \u2550\u2550\u2550\nTimestamp: 2026-03-21T13:48:10Z\nComando: kubectl scale deploy/auth-service --replicas=0 -n users\nExit code: 0\nOutput: deployment.apps/auth-service scaled\nDuración: 1717ms\nPods auth-service después: 0\n\nRESULTADO: auth-service escalado a 0 — IDP no disponible`,
+      p3: `\u2550\u2550\u2550 FASE 3: Ventana de cache (auth-service=0) \u2550\u2550\u2550\nTimestamp: 2026-03-21T13:48:10Z\nauth-service replicas: 0\nJWT_CACHE_TTL_SECONDS: 300 (configurado)\nVentana de medición: 30s\n\n─── Mediciones: Cache window (auth=0) (30s, cada 5s) ───\n  [13:48:10] +0s   HTTP 503  FAIL\n  [13:48:16] +5s   HTTP 503  FAIL\n  [13:48:21] +10s  HTTP 503  FAIL\n  [13:48:28] +15s  HTTP 503  FAIL\n  [13:48:33] +20s  HTTP 503  FAIL\n  [13:48:39] +25s  HTTP 503  FAIL\n\n  Total: 6 requests | OK: 0 | FAIL: 6\n  Disponibilidad: 0%\n\nRESULTADO: Disponibilidad en ventana de cache: 0%\nANÁLISIS: FAIL-SECURE — user-api NO acepta requests sin auth-service.`,
+      p4: `\u2550\u2550\u2550 FASE 4: Post-cache (auth-service=0, TTL expirado) \u2550\u2550\u2550\nTimestamp: 2026-03-21T13:48:45Z\nauth-service replicas: 0 (confirmado)\nVentana de medición: 15s\n\n─── Mediciones: Post-cache (auth=0) (15s, cada 5s) ───\n  [13:48:45] +0s   HTTP 503  FAIL\n  [13:48:51] +5s   HTTP 503  FAIL\n  [13:48:57] +10s  HTTP 503  FAIL\n\n  Total: 3 requests | OK: 0 | FAIL: 3\n  Disponibilidad: 0%\n\nRESULTADO: Disponibilidad post-cache: 0%\nCOMPORTAMIENTO: fail-secure\n\nFAIL-SECURE CONFIRMADO:\n  Después de que el cache expira, user-api rechaza todas las\n  requests porque no puede validar tokens con auth-service.\n  → Seguridad mantenida, disponibilidad sacrificada.`,
+    },
+    report: `\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n\u2551             SCE-D-001 \u2014 REPORTE DE EXPERIMENTO                     \u2551\n\u2551        Agotamiento del IDP (fail-secure behavior)                  \u2551\n\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\nFecha de ejecución: 2026-03-21T13:49:09Z\nTarget:             users/auth-service (IDP) \u2192 users/user-api (dependiente)\nMétodo:             Scale auth-service a 0 réplicas\n\nVERDICTO: >>> HIPÓTESIS CONFIRMADA <<<\nEl sistema se comporta fail-secure: sin IDP, el servicio rechaza todas las requests.\n\nDisponibilidad: Baseline 100% \u2192 Cache 0% \u2192 Post-cache 0%\n\nMITRE ATT&CK: TA0040 · T1499 · T1499.002`,
+  },
+  i002: {
+    timing: { labels: ['F1 /var/log write', 'F2 stdout tamper', 'F3 ES access', 'F4 Host audit'], values: [103, 124, 15152, 113] },
+    color: '#3fb950',
+    auditEvents: [
+      { ts: '13:43:43.279', user: 'kubernetes-admin', action: 'exec env' },
+      { ts: '13:43:43.699', user: 'kubernetes-admin', action: 'exec cat .../token' },
+      { ts: '13:44:08.952', user: 'kubernetes-admin', action: 'exec sh (varlog write attempts)', admin: true },
+      { ts: '13:44:09.100', user: 'kubernetes-admin', action: 'exec sh (stdout tamper)', admin: true },
+      { ts: '13:44:09.232', user: 'kubernetes-admin', action: 'exec sh (ES access attempts)', admin: true },
+      { ts: '13:44:24.429', user: 'kubernetes-admin', action: 'exec sh (host audit access)', admin: true },
+    ],
+    phases: {
+      p1: `\u2550\u2550\u2550 FASE 1: Escritura en /var/log/ \u2550\u2550\u2550\nTimestamp: 2026-03-21T13:44:09Z\nComando: sh -c 'touch /var/log/...; echo > /var/log/...'\nExit code: 0\nDuración: 103ms\n\n─── Output ───\n=== Intento 1: Crear archivo en /var/log/ ===\ntouch: /var/log/fake-audit.log: Read-only file system\nBLOCKED: touch /var/log/fake-audit.log\n=== Intento 2: Escribir en /var/log/messages ===\nBLOCKED: write /var/log/messages\n=== Intento 3: Crear directorio en /var/log/ ===\nmkdir: can't create directory '/var/log/attacker': Read-only file system\nBLOCKED: mkdir /var/log/attacker\n=== Intento 4: Escribir en /tmp/ (control — debe funcionar) ===\nALLOWED: write /tmp/test-write.txt\n\nRESULTADO: ESCRITURA EN /var/log/ BLOQUEADA\nCONTROL EFECTIVO: readOnlyRootFilesystem`,
+      p2: `\u2550\u2550\u2550 FASE 2: Manipulación de stdout/stderr \u2550\u2550\u2550\nTimestamp: 2026-03-21T13:44:09Z\nExit code: 0\nDuración: 124ms\n\n─── Output ───\n=== Intento 1: Acceso a /proc/1/fd/1 (stdout del PID 1) ===\n=== Intento 2: Acceso a /proc/1/fd/2 (stderr del PID 1) ===\n=== Intento 3: Inyectar línea falsa en stdout ===\n{"level":"INFO","msg":"legitimate-looking-but-fake","user":"admin","action":"login_success"}\n\nANÁLISIS:\n  - Un atacante puede inyectar líneas en stdout del contenedor\n  - Estas líneas llegarán a Fluentd → Elasticsearch como logs legítimos\n  - PERO: los registros originales NO se pueden eliminar\n  - Los registros en ES son append-only`,
+      p3: `\u2550\u2550\u2550 FASE 3: Acceso directo a Elasticsearch \u2550\u2550\u2550\nTimestamp: 2026-03-21T13:44:24Z\nExit code: 0\nDuración: 15152ms\n\n─── Output ───\n=== Intento 1: Conectar a ES en logging namespace ===\nBLOCKED: connection to ES timed out\n\n=== Intento 2: Intentar eliminar índice fluentd ===\nBLOCKED: DELETE to ES timed out\n\n=== Intento 3: Intentar insertar documento falso ===\nBLOCKED: POST to ES timed out\n\nRESULTADO: ACCESO A ELASTICSEARCH BLOQUEADO\nCONTROL EFECTIVO: NetworkPolicy default-deny-all`,
+      p4: `\u2550\u2550\u2550 FASE 4: Acceso al audit log del host \u2550\u2550\u2550\nTimestamp: 2026-03-21T13:44:24Z\nExit code: 0\nDuración: 113ms\n\n─── Output ───\n=== Intento 1: Leer audit log del host ===\ncat: can't open '/var/log/kubernetes/audit.log': No such file or directory\n\n=== Intento 2: Listar /host/ (hostPath mounts) ===\nBLOCKED: /host/ no existe (no hay hostPath mounts)\n\n=== Intento 4: Verificar capabilities del contenedor ===\nCapInh: 0000000000000000\nCapPrm: 0000000000000000\nCapEff: 0000000000000000\nCapBnd: 0000000000000000\n\nRESULTADO: ACCESO AL AUDIT LOG DEL HOST BLOQUEADO\nCONTROLES EFECTIVOS: No hostPath, no privileges, seccomp`,
+    },
+    report: `\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n\u2551             SCE-I-002 \u2014 REPORTE DE EXPERIMENTO                     \u2551\n\u2551        Corrupción de registros de auditoría                        \u2551\n\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n\nFecha de ejecución: 2026-03-21T13:44:35Z\nTarget:             payments/payment-processor\n\nVERDICTO: HIPÓTESIS CONFIRMADA\nLos registros de auditoría están protegidos. El atacante NO puede eliminar ni modificar registros.\nRiesgo residual: log injection via stdout (riesgo BAJO).\n\nControles efectivos: readOnlyRootFilesystem · NetworkPolicy (ES) · Sin hostPath · allowPrivilegeEscalation:false\nES Integridad: 1 índice · 3734 documentos · 0 eliminados\n\nMITRE ATT&CK: TA0005 · T1562.008 · T1070.002`,
+  }
+};
+
+// ═══════════════════════ POPULATE DATA ═══════════════════════
+
+// Phase content
+document.getElementById('c001-p1').textContent = DATA.c001.phases.p1;
+document.getElementById('c001-p2').textContent = DATA.c001.phases.p2;
+document.getElementById('c001-p3').textContent = DATA.c001.phases.p3;
+document.getElementById('c001-p4').textContent = DATA.c001.phases.p4;
+document.getElementById('c001-report').textContent = DATA.c001.report;
+
+document.getElementById('d001-p1').textContent = DATA.d001.phases.p1;
+document.getElementById('d001-p2').textContent = DATA.d001.phases.p2;
+document.getElementById('d001-p3').textContent = DATA.d001.phases.p3;
+document.getElementById('d001-p4').textContent = DATA.d001.phases.p4;
+document.getElementById('d001-report').textContent = DATA.d001.report;
+
+document.getElementById('i002-p1').textContent = DATA.i002.phases.p1;
+document.getElementById('i002-p2').textContent = DATA.i002.phases.p2;
+document.getElementById('i002-p3').textContent = DATA.i002.phases.p3;
+document.getElementById('i002-p4').textContent = DATA.i002.phases.p4;
+document.getElementById('i002-report').textContent = DATA.i002.report;
+
+// Audit timelines
+function buildTimeline(el, events) {
+  const ul = document.getElementById(el);
+  events.forEach(ev => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="tl-time">${ev.ts}</span><span class="tl-user ${ev.admin ? 'tl-admin' : ''}">${ev.user}</span><span class="tl-action">${ev.action}</span>`;
+    ul.appendChild(li);
+  });
+}
+buildTimeline('c001-audit', DATA.c001.auditEvents);
+buildTimeline('d001-audit', DATA.d001.auditEvents);
+
+// ═══════════════════════ CHARTS ═══════════════════════
+
+Chart.defaults.color = '#8b949e';
+Chart.defaults.borderColor = '#30363d';
+
+const barOpts = (color, labels, values, unit) => ({
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [{ data: values, backgroundColor: color + '99', borderColor: color, borderWidth: 1, borderRadius: 4 }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.raw.toLocaleString()}${unit}` } } },
+    scales: {
+      x: { grid: { color: '#30363d' }, ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(1)+'s' : v+'ms' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+new Chart(document.getElementById('c001-timing'), barOpts(DATA.c001.color, DATA.c001.timing.labels, DATA.c001.timing.values, 'ms'));
+new Chart(document.getElementById('d001-timing'), barOpts(DATA.d001.color, DATA.d001.timing.labels, DATA.d001.timing.values, 'ms'));
+new Chart(document.getElementById('i002-timing'), barOpts(DATA.i002.color, DATA.i002.timing.labels, DATA.i002.timing.values, 'ms'));
+
+// Availability line chart
+new Chart(document.getElementById('d001-avail'), {
+  type: 'line',
+  data: {
+    labels: ['F1 Baseline\n(auth OK)', 'F3 Cache\n(auth=0)', 'F4 Post-cache\n(auth=0, TTL exp.)'],
+    datasets: [{
+      label: 'Disponibilidad %',
+      data: [100, 0, 0],
+      borderColor: '#5c9ee0',
+      backgroundColor: 'rgba(92,158,224,.1)',
+      tension: 0.3,
+      fill: true,
+      pointBackgroundColor: ['#3fb950', '#f85149', '#f85149'],
+      pointRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { min: 0, max: 110, grid: { color: '#30363d' }, ticks: { callback: v => v + '%' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// Summary grouped bar chart
+new Chart(document.getElementById('summary-timing'), {
+  type: 'bar',
+  data: {
+    labels: ['Fase 1', 'Fase 2', 'Fase 3', 'Fase 4'],
+    datasets: [
+      { label: 'SCE-C-001', data: [95, 104, 5157, 5147], backgroundColor: '#e05c5c99', borderColor: '#e05c5c', borderWidth: 1, borderRadius: 3 },
+      { label: 'SCE-D-001', data: [17972, 1717, 35436, 17886], backgroundColor: '#5c9ee099', borderColor: '#5c9ee0', borderWidth: 1, borderRadius: 3 },
+      { label: 'SCE-I-002', data: [103, 124, 15152, 113], backgroundColor: '#3fb95099', borderColor: '#3fb950', borderWidth: 1, borderRadius: 3 },
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { labels: { boxWidth: 12 } } },
+    scales: {
+      y: { grid: { color: '#30363d' }, ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(0)+'s' : v+'ms' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// Summary radar chart
+new Chart(document.getElementById('summary-radar'), {
+  type: 'radar',
+  data: {
+    labels: ['Controles\nEfectivos', 'Fases\nBloqueadas', 'Audit\nEventos', 'Hipótesis\nValidada'],
+    datasets: [
+      { label: 'SCE-C-001', data: [4, 3, 5, 6], borderColor: '#e05c5c', backgroundColor: 'rgba(224,92,92,.12)', pointBackgroundColor: '#e05c5c' },
+      { label: 'SCE-D-001', data: [5, 4, 8, 10], borderColor: '#5c9ee0', backgroundColor: 'rgba(92,158,224,.12)', pointBackgroundColor: '#5c9ee0' },
+      { label: 'SCE-I-002', data: [7, 4, 7, 10], borderColor: '#3fb950', backgroundColor: 'rgba(63,185,80,.12)', pointBackgroundColor: '#3fb950' },
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { labels: { boxWidth: 12 } } },
+    scales: {
+      r: {
+        grid: { color: '#30363d' },
+        pointLabels: { color: '#8b949e', font: { size: 11 } },
+        ticks: { display: false },
+        min: 0, max: 10
+      }
+    }
+  }
+});
+
+// ═══════════════════════ TABS ═══════════════════════
+
+function showTab(id) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+</script>
+</body>
+</html>

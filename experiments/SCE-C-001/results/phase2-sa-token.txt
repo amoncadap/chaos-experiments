@@ -1,8 +1,8 @@
 ═══ FASE 2: Lectura del ServiceAccount token ═══
-Timestamp: 2026-03-21T13:43:43Z
+Timestamp: 2026-04-09T15:13:57Z
 Comando: kubectl exec → cat /run/secrets/.../token
 Exit code: 1
-Duración: 104ms
+Duración: 137ms
 
 ─── Output ───
 cat: can't open '/run/secrets/kubernetes.io/serviceaccount/token': No such file or directory

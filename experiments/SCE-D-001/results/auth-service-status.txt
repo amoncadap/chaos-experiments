@@ -1,15 +1,14 @@
 ═══ Evidencia: Estado de auth-service ═══
-Timestamp: 2026-03-21T13:49:08Z
+Timestamp: 2026-04-09T15:15:52Z
 
 ─── Deployment Status ───
 NAME           READY   UP-TO-DATE   AVAILABLE   AGE
-auth-service   0/0     0            0           19m
+auth-service   0/0     0            0           19d
 
 ─── Pods ───
 
 ─── Events ───
 Events:
-  Type    Reason             Age                  From                   Message
-  ----    ------             ----                 ----                   -------
-  Normal  ScalingReplicaSet  3m15s (x2 over 19m)  deployment-controller  Scaled up replica set auth-service-5df6987b48 from 0 to 1
-  Normal  ScalingReplicaSet  60s (x2 over 4m9s)   deployment-controller  Scaled down replica set auth-service-5df6987b48 from 1 to 0
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  62s   deployment-controller  Scaled down replica set auth-service-5df6987b48 from 1 to 0

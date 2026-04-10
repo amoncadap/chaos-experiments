@@ -1,11 +1,11 @@
 ═══ FASE 1: Baseline — auth-service activo ═══
-Timestamp: 2026-03-21T13:47:50Z
+Timestamp: 2026-04-09T15:14:32Z
 auth-service replicas: 1
 
 ─── Mediciones: Baseline (15s, cada 5s) ───
-  [13:47:50] +0s  HTTP 200  OK
-  [13:47:56] +5s  HTTP 200  OK
-  [13:48:02] +10s  HTTP 200  OK
+  [15:14:32] +0s  HTTP 200  OK
+  [15:14:38] +5s  HTTP 200  OK
+  [15:14:44] +10s  HTTP 200  OK
 
   Total: 3 requests | OK: 3 | FAIL: 0
   Disponibilidad: 100%

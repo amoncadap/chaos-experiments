@@ -1,5 +1,5 @@
 ═══ FASE 4: Exfiltración por DNS ═══
-Timestamp: 2026-03-21T13:43:54Z
+Timestamp: 2026-04-09T15:14:07Z
 Comando: curl -sf --max-time 5 http://ifconfig.me
 Exit code: 28
 Duración: 5147ms

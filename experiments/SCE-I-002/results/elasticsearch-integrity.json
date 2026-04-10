@@ -1,9 +1,45 @@
 ═══ Evidencia Elasticsearch — Integridad de índices ═══
-Timestamp: 2026-03-21T13:44:35Z
-Índices fluentd-*: 1
+Timestamp: 2026-04-09T15:16:51Z
+Índices fluentd-*: 4
 Documentos totales: 0
 
 [
+  {
+    "health": "yellow",
+    "status": "open",
+    "index": "fluentd-2026.03.22",
+    "uuid": "fWJvqF29RkCn1NZCUkDg5g",
+    "pri": "1",
+    "rep": "1",
+    "docs.count": "203876",
+    "docs.deleted": "0",
+    "store.size": "131.7mb",
+    "pri.store.size": "131.7mb"
+  },
+  {
+    "health": "yellow",
+    "status": "open",
+    "index": "fluentd-2026.03.23",
+    "uuid": "Z4TN9mn8T16W5buiD5ZRvQ",
+    "pri": "1",
+    "rep": "1",
+    "docs.count": "203803",
+    "docs.deleted": "0",
+    "store.size": "77.2mb",
+    "pri.store.size": "77.2mb"
+  },
+  {
+    "health": "yellow",
+    "status": "open",
+    "index": "fluentd-2026.03.24",
+    "uuid": "rxv_5M8tT_GfIyAUALbCjQ",
+    "pri": "1",
+    "rep": "1",
+    "docs.count": "6772077",
+    "docs.deleted": "0",
+    "store.size": "1.1gb",
+    "pri.store.size": "1.1gb"
+  },
   {
     "health": "yellow",
     "status": "open",
@@ -11,10 +47,10 @@ Documentos totales: 0
     "uuid": "-EPH5KfOQCWNnhC1IiLcog",
     "pri": "1",
     "rep": "1",
-    "docs.count": "3734",
+    "docs.count": "91943",
     "docs.deleted": "0",
-    "store.size": "2mb",
-    "pri.store.size": "2mb"
+    "store.size": "35.4mb",
+    "pri.store.size": "35.4mb"
   }
 ]
 

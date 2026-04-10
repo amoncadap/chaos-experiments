@@ -1,9 +1,9 @@
 ═══ FASE 2: Scale-to-zero ═══
-Timestamp: 2026-03-21T13:48:10Z
+Timestamp: 2026-04-09T15:14:52Z
 Comando: kubectl scale deploy/auth-service --replicas=0 -n users
 Exit code: 0
 Output: deployment.apps/auth-service scaled
-Duración: 1717ms
+Duración: 1376ms
 Pods auth-service después: 0
 
 RESULTADO: auth-service escalado a 0 — IDP no disponible

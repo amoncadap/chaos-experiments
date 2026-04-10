@@ -3,7 +3,7 @@
 ║        Corrupción de registros de auditoría                        ║
 ╚══════════════════════════════════════════════════════════════════════╝
 
-Fecha de ejecución: 2026-03-21T13:44:35Z
+Fecha de ejecución: 2026-04-09T15:16:51Z
 Target:             payments/payment-processor
 Imagen:             curlimages/curl:latest
 
@@ -29,7 +29,7 @@ RESULTADOS POR FASE
 │ FASE 1 — Escritura en /var/log/ (readOnlyRootFilesystem)          │
 ├─────────────────────────────────────────────────────────────────────┤
 │ Escritura bloqueada: true                                │
-│ Duración:            103ms                                        │
+│ Duración:            240ms                                        │
 │ Evidencia:           results/phase1-varlog-write.txt               │
 │ Control:             readOnlyRootFilesystem: true                  │
 │ Nota:                /tmp/ (emptyDir) sí permite escritura         │
@@ -39,7 +39,7 @@ RESULTADOS POR FASE
 │ FASE 2 — Inyección en stdout/stderr (log injection)               │
 ├─────────────────────────────────────────────────────────────────────┤
 │ Inyección posible:  sí (stdout es writable)                        │
-│ Duración:           124ms                                         │
+│ Duración:           166ms                                         │
 │ Evidencia:          results/phase2-stdout-tamper.txt               │
 │ Impacto:            Se pueden AGREGAR registros falsos,            │
 │                     pero NO eliminar los existentes                │
@@ -49,7 +49,7 @@ RESULTADOS POR FASE
 │ FASE 3 — Acceso directo a Elasticsearch                           │
 ├─────────────────────────────────────────────────────────────────────┤
 │ Acceso bloqueado: true                                       │
-│ Duración:         15152ms                                           │
+│ Duración:         254ms                                           │
 │ Evidencia:        results/phase3-es-access.txt                     │
 │ Control:          NetworkPolicy default-deny-all                   │
 │ Protege:          DELETE/PUT en índices fluentd-*                   │
@@ -59,7 +59,7 @@ RESULTADOS POR FASE
 │ FASE 4 — Acceso al audit log del host                             │
 ├─────────────────────────────────────────────────────────────────────┤
 │ Acceso bloqueado: true                                     │
-│ Duración:         113ms                                           │
+│ Duración:         159ms                                           │
 │ Evidencia:        results/phase4-host-audit.txt                    │
 │ Controles:        No hostPath, no privileges, seccomp              │
 └─────────────────────────────────────────────────────────────────────┘

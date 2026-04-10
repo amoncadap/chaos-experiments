@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>SCE Lab — Salidas de Consola</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0d1117; color: #c9d1d9; font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Menlo', monospace; font-size: 13px; }
+
+    .header { background: #161b22; border-bottom: 1px solid #30363d; padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
+    .header h1 { font-size: 15px; font-weight: 600; color: #e6edf3; }
+    .header .sub { font-size: 11px; color: #8b949e; margin-top: 2px; }
+
+    .tabs { background: #161b22; border-bottom: 1px solid #30363d; padding: 0 24px; display: flex; }
+    .tab-btn { padding: 10px 18px; border: none; background: none; color: #8b949e; cursor: pointer; font-size: 12px; font-family: inherit; font-weight: 500; border-bottom: 2px solid transparent; }
+    .tab-btn.active { color: #e6edf3; border-bottom-color: #58a6ff; }
+    .tab-btn .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; }
+
+    .content { padding: 0; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* Terminal window */
+    .terminal-wrap { padding: 20px 24px; }
+    .terminal { background: #010409; border: 1px solid #30363d; border-radius: 8px; overflow: hidden; }
+    .terminal-bar { background: #161b22; padding: 10px 14px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #30363d; }
+    .terminal-bar .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .terminal-bar .title { margin-left: 8px; font-size: 11px; color: #8b949e; }
+    .terminal-body { padding: 16px 20px; overflow-x: auto; }
+    pre { white-space: pre-wrap; word-break: break-word; line-height: 1.7; font-family: inherit; font-size: 13px; }
+
+    /* Colors */
+    .g  { color: #3fb950; }   /* green  — ok / blocked */
+    .r  { color: #f85149; }   /* red    — finding / error */
+    .y  { color: #d29922; }   /* yellow — warning */
+    .c  { color: #79c0ff; }   /* cyan   — info / command */
+    .w  { color: #e6edf3; }   /* white  */
+    .m  { color: #d2a8ff; }   /* purple — timestamp */
+    .dim{ color: #484f58; }   /* dim    */
+    .b  { font-weight: 700; }
+    .box-title { color: #58a6ff; font-weight: 700; }
+    .sep { color: #30363d; }
+
+    /* Phase blocks */
+    .phase-block { margin-bottom: 24px; }
+    .phase-label { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-bottom: 8px; letter-spacing: .5px; }
+    .label-ok   { background: rgba(63,185,80,.15);  color: #3fb950; border: 1px solid rgba(63,185,80,.3); }
+    .label-find { background: rgba(248,81,73,.15);  color: #f85149; border: 1px solid rgba(248,81,73,.3); }
+    .label-warn { background: rgba(210,153,34,.15); color: #d29922; border: 1px solid rgba(210,153,34,.3); }
+
+    .section-sep { border: none; border-top: 1px solid #21262d; margin: 20px 0; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>SCE Lab — Salidas de Consola</h1>
+    <div class="sub">Evidencia de hallazgos · Ejecución 2026-04-09</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('c001',this)">
+    <span class="dot" style="background:#e05c5c"></span>SCE-C-001
+  </button>
+  <button class="tab-btn" onclick="showTab('d001',this)">
+    <span class="dot" style="background:#5c9ee0"></span>SCE-D-001
+  </button>
+  <button class="tab-btn" onclick="showTab('i002',this)">
+    <span class="dot" style="background:#3fb950"></span>SCE-I-002
+  </button>
+</div>
+
+<!-- ═══════════════════════ SCE-C-001 ═══════════════════════ -->
+<div id="tab-c001" class="tab-pane active">
+  <div class="terminal-wrap">
+
+    <!-- FASE 1 -->
+    <div class="phase-block">
+      <div class="phase-label label-find">FASE 1 — HALLAZGO CONFIRMADO</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">payments/payment-processor — kubectl exec env</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ FASE 1: Reconocimiento de credenciales ═══</span>
+<span class="m">Timestamp: 2026-04-09T15:13:57Z</span>
+<span class="c">Comando: kubectl exec -n payments deploy/payment-processor -c payment-processor -- env</span>
+<span class="g">Exit code: 0</span>  <span class="dim">Duración: 135ms</span>
+
+<span class="dim">─── Credenciales encontradas ───</span>
+<span class="r b">API_KEY=api-key-that-should-be-in-vault</span>
+<span class="r b">STRIPE_KEY=sk_test_lab_key_not_real</span>
+<span class="r b">DB_PASSWORD=super-secret-db-password-lab-only</span>
+
+<span class="r b">RESULTADO: HALLAZGO CONFIRMADO — Credenciales visibles como env vars</span>
+<span class="y">IMPACTO:   Un atacante con acceso al pod puede leer DB_PASSWORD, API_KEY, STRIPE_KEY</span>
+</pre></div>
+      </div>
+    </div>
+
+    <!-- FASE 2 -->
+    <div class="phase-block">
+      <div class="phase-label label-ok">FASE 2 — CONTROL EFECTIVO (SA Token)</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">payments/payment-processor — kubectl exec cat /run/secrets/…/token</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ FASE 2: Lectura del ServiceAccount token ═══</span>
+<span class="m">Timestamp: 2026-04-09T15:13:57Z</span>
+<span class="c">Comando: kubectl exec → cat /run/secrets/kubernetes.io/serviceaccount/token</span>
+<span class="r">Exit code: 1</span>  <span class="dim">Duración: 137ms</span>
+
+<span class="dim">─── Output ───</span>
+<span class="y">cat: can't open '/run/secrets/kubernetes.io/serviceaccount/token': No such file or directory</span>
+<span class="y">command terminated with exit code 1</span>
+
+<span class="g b">RESULTADO: TOKEN NO ACCESIBLE — automountServiceAccountToken deshabilitado</span>
+<span class="g">CONTROL EFECTIVO: El pod no monta el token del SA por defecto</span>
+</pre></div>
+      </div>
+    </div>
+
+    <!-- FASE 3 -->
+    <div class="phase-block">
+      <div class="phase-label label-ok">FASE 3 — EGRESS BLOQUEADO (NetworkPolicy)</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">payments/payment-processor — curl http://1.1.1.1</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ FASE 3: Exfiltración por red (egress externo) ═══</span>
+<span class="m">Timestamp: 2026-04-09T15:14:02Z</span>
+<span class="c">Comando: curl -sf --max-time 5 http://1.1.1.1/</span>
+<span class="r">Exit code: 28</span>  <span class="dim">Duración: 5224ms (timeout de red)</span>
+
+<span class="dim">─── Output ───</span>
+<span class="y">command terminated with exit code 28</span>
+
+<span class="g b">RESULTADO: EGRESS BLOQUEADO — NetworkPolicy default-deny-all efectiva</span>
+<span class="g">CONTROL EFECTIVO: El atacante no puede enviar credenciales a un servidor externo</span>
+</pre></div>
+      </div>
+    </div>
+
+    <!-- FASE 4 -->
+    <div class="phase-block">
+      <div class="phase-label label-ok">FASE 4 — DNS EXFILTRACIÓN BLOQUEADA</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">payments/payment-processor — curl http://ifconfig.me</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ FASE 4: Exfiltración por DNS ═══</span>
+<span class="m">Timestamp: 2026-04-09T15:14:07Z</span>
+<span class="c">Comando: curl -sf --max-time 5 http://ifconfig.me</span>
+<span class="r">Exit code: 28</span>  <span class="dim">Duración: 5147ms (timeout de red)</span>
+
+<span class="dim">─── Output ───</span>
+<span class="y">command terminated with exit code 28</span>
+
+<span class="g b">RESULTADO: DNS EXFILTRACIÓN BLOQUEADA</span>
+<span class="g">CONTROL EFECTIVO: La resolución DNS externa y/o egress HTTP bloqueados</span>
+</pre></div>
+      </div>
+    </div>
+
+    <!-- AUDIT LOG -->
+    <div class="phase-block">
+      <div class="phase-label label-warn">EVIDENCIA — Audit Log K8s (5 eventos exec)</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">K8s Audit Log — kubectl exec events en namespace payments</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ Evidencia Audit Log — kubectl exec en payments ═══</span>
+<span class="m">Timestamp recolección: 2026-04-09T15:14:18Z</span>
+<span class="g">Eventos encontrados: 5</span>
+
+<span class="y">{"timestamp":"2026-04-09T15:13:57Z","user":"<span class="r">kubernetes-admin</span>","verb":"get",</span>
+<span class="y"> "subresource":"<span class="r">exec</span>","command":"…exec?command=<span class="r">env</span>&container=payment-processor"}</span>
+
+<span class="y">{"timestamp":"2026-04-09T15:13:57Z","user":"<span class="r">kubernetes-admin</span>","verb":"get",</span>
+<span class="y"> "subresource":"<span class="r">exec</span>","command":"…exec?command=<span class="r">cat</span>&command=<span class="r">%2Frun%2Fsecrets%2F…%2Ftoken</span>"}</span>
+
+<span class="y">{"timestamp":"2026-04-09T15:14:02Z","user":"<span class="r">kubernetes-admin</span>","verb":"get",</span>
+<span class="y"> "subresource":"<span class="r">exec</span>","command":"…exec?command=<span class="r">curl</span>&command=http%3A%2F%2F1.1.1.1"}</span>
+
+<span class="y">{"timestamp":"2026-04-09T15:14:07Z","user":"<span class="r">kubernetes-admin</span>","verb":"get",</span>
+<span class="y"> "subresource":"<span class="r">exec</span>","command":"…exec?command=<span class="r">curl</span>&command=http%3A%2F%2Fifconfig.me"}</span>
+
+<span class="g">→ Todos los intentos de exfiltración quedaron registrados en el audit log del control-plane</span>
+</pre></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════ SCE-D-001 ═══════════════════════ -->
+<div id="tab-d001" class="tab-pane">
+  <div class="terminal-wrap">
+
+    <!-- FASE 1 -->
+    <div class="phase-block">
+      <div class="phase-label label-ok">FASE 1 — BASELINE 100% disponibilidad</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">users/user-api — medición de disponibilidad (auth-service activo)</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ FASE 1: Baseline — auth-service activo ═══</span>
+<span class="m">Timestamp: 2026-04-09T15:14:32Z</span>
+<span class="c">auth-service replicas: 1</span>
+
+<span class="dim">─── Mediciones: Baseline (15s, cada 5s) ───</span>
+  <span class="m">[15:14:32]</span> +0s   <span class="g">HTTP 200  OK</span>
+  <span class="m">[15:14:38]</span> +5s   <span class="g">HTTP 200  OK</span>
+  <span class="m">[15:14:44]</span> +10s  <span class="g">HTTP 200  OK</span>
+
+  Total: 3 requests | <span class="g">OK: 3</span> | FAIL: 0
+  <span class="g b">Disponibilidad: 100%</span>
+
+<span class="g b">RESULTADO: Disponibilidad baseline: 100%</span>
+</pre></div>
+      </div>
+    </div>
+
+    <!-- FASE 2 -->
+    <div class="phase-block">
+      <div class="phase-label label-warn">FASE 2 — INYECCIÓN: scale auth-service → 0</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">users — kubectl scale deploy/auth-service --replicas=0</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ FASE 2: Scale-to-zero ═══</span>
+<span class="m">Timestamp: 2026-04-09T15:14:50Z</span>
+<span class="c">Comando: kubectl scale deploy/auth-service --replicas=0 -n users</span>
+<span class="g">Exit code: 0</span>  <span class="dim">Duración: 1376ms</span>
+
+<span class="y">deployment.apps/auth-service scaled</span>
+<span class="y">Pods auth-service después: 0</span>
+
+<span class="r b">RESULTADO: auth-service escalado a 0 — IDP no disponible</span>
+</pre></div>
+      </div>
+    </div>
+
+    <!-- FASE 3 -->
+    <div class="phase-block">
+      <div class="phase-label label-find">FASE 3 — 0% disponibilidad (JWT cache inefectivo)</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">users/user-api — medición cache window (auth-service=0)</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ FASE 3: Ventana de cache (auth-service=0) ═══</span>
+<span class="m">Timestamp: 2026-04-09T15:14:52Z</span>
+<span class="c">auth-service replicas: 0  |  JWT_CACHE_TTL: 300s</span>
+
+<span class="dim">─── Mediciones: Cache window (30s, cada 5s) ───</span>
+  <span class="m">[15:14:52]</span> +0s   <span class="r">HTTP 503  FAIL</span>
+  <span class="m">[15:14:58]</span> +5s   <span class="r">HTTP 503  FAIL</span>
+  <span class="m">[15:15:04]</span> +10s  <span class="r">HTTP 503  FAIL</span>
+  <span class="m">[15:15:10]</span> +15s  <span class="r">HTTP 503  FAIL</span>
+  <span class="m">[15:15:16]</span> +20s  <span class="r">HTTP 503  FAIL</span>
+  <span class="m">[15:15:22]</span> +25s  <span class="r">HTTP 503  FAIL</span>
+
+  Total: 6 requests | OK: 0 | <span class="r">FAIL: 6</span>
+  <span class="r b">Disponibilidad: 0%</span>
+
+<span class="g b">ANÁLISIS: FAIL-SECURE — user-api NO acepta requests sin auth-service.</span>
+<span class="g">El servicio prioriza seguridad sobre disponibilidad.</span>
+</pre></div>
+      </div>
+    </div>
+
+    <!-- FASE 4 -->
+    <div class="phase-block">
+      <div class="phase-label label-ok">FASE 4 — FAIL-SECURE CONFIRMADO</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">users/user-api — post-cache (TTL expirado, auth=0)</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ FASE 4: Post-cache (auth-service=0, TTL expirado) ═══</span>
+<span class="m">Timestamp: 2026-04-09T15:15:29Z</span>
+<span class="c">auth-service replicas: 0 (confirmado)</span>
+
+<span class="dim">─── Mediciones: Post-cache (15s, cada 5s) ───</span>
+  <span class="m">[15:15:29]</span> +0s   <span class="r">HTTP 503  FAIL</span>
+  <span class="m">[15:15:35]</span> +5s   <span class="r">HTTP 503  FAIL</span>
+  <span class="m">[15:15:41]</span> +10s  <span class="r">HTTP 503  FAIL</span>
+
+  Total: 3 requests | OK: 0 | <span class="r">FAIL: 3</span>
+  <span class="r b">Disponibilidad: 0%  |  Comportamiento: fail-secure</span>
+
+<span class="g b">FAIL-SECURE CONFIRMADO:</span>
+<span class="g">  user-api rechaza todas las requests porque no puede validar</span>
+<span class="g">  tokens con auth-service.</span>
+<span class="g">  → Seguridad mantenida, disponibilidad sacrificada.</span>
+</pre></div>
+      </div>
+    </div>
+
+    <!-- ROLLBACK -->
+    <div class="phase-block">
+      <div class="phase-label label-ok">ROLLBACK — auth-service restaurado</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">users — rollback auth-service --replicas=1</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="c">kubectl scale deploy/auth-service --replicas=1 -n users</span>
+<span class="g">deployment.apps/auth-service scaled</span>
+<span class="g">deployment.apps/auth-service condition met  (Ready)</span>
+
+<span class="g b">✓  auth-service restaurado: 1 réplica(s) Ready</span>
+<span class="g b">✓  Conectividad restaurada: user-api → auth-service HTTP 200</span>
+</pre></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════ SCE-I-002 ═══════════════════════ -->
+<div id="tab-i002" class="tab-pane">
+  <div class="terminal-wrap">
+
+    <!-- FASE 1 -->
+    <div class="phase-block">
+      <div class="phase-label label-ok">FASE 1 — /var/log BLOQUEADO (readOnlyRootFilesystem)</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">payments/payment-processor — intentos de escritura en /var/log/</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ FASE 1: Escritura en /var/log/ ═══</span>
+<span class="m">Timestamp: 2026-04-09T15:16:39Z</span>
+<span class="dim">Duración: 240ms</span>
+
+<span class="dim">=== Intento 1: Crear archivo en /var/log/ ===</span>
+<span class="r">touch: /var/log/fake-audit.log: Read-only file system</span>
+<span class="g b">BLOCKED: touch /var/log/fake-audit.log</span>
+
+<span class="dim">=== Intento 2: Escribir en /var/log/messages ===</span>
+<span class="g b">BLOCKED: write /var/log/messages</span>
+
+<span class="dim">=== Intento 3: Crear directorio en /var/log/ ===</span>
+<span class="r">mkdir: can't create directory '/var/log/attacker': Read-only file system</span>
+<span class="g b">BLOCKED: mkdir /var/log/attacker</span>
+
+<span class="dim">=== Intento 4: Escribir en /tmp/ (control — debe funcionar) ===</span>
+<span class="y">ALLOWED: write /tmp/test-write.txt</span>  <span class="dim">← confirma que el bloqueo es de rootfs, no permisos</span>
+
+<span class="g b">RESULTADO: ESCRITURA EN /var/log/ BLOQUEADA</span>
+<span class="g">CONTROL EFECTIVO: readOnlyRootFilesystem impide modificar archivos de log</span>
+</pre></div>
+      </div>
+    </div>
+
+    <!-- FASE 2 -->
+    <div class="phase-block">
+      <div class="phase-label label-warn">FASE 2 — Log Injection via stdout (RIESGO BAJO)</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">payments/payment-processor — inyección de línea falsa en stdout</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ FASE 2: Manipulación de stdout/stderr ═══</span>
+<span class="m">Timestamp: 2026-04-09T15:16:39Z</span>
+<span class="dim">Duración: 166ms</span>
+
+<span class="dim">=== Intento 3: Inyectar línea falsa en stdout (log injection) ===</span>
+<span class="y b">{"level":"INFO","msg":"legitimate-looking-but-fake","user":"admin","action":"login_success"}</span>
+
+<span class="dim">=== Descriptores /proc/1/fd/ ===</span>
+<span class="dim">lrwx------  1 -> /dev/null</span>
+<span class="dim">l-wx------  1 -> pipe:[849899]</span>
+
+<span class="y b">HALLAZGO: Un atacante puede inyectar líneas en stdout → Fluentd → Elasticsearch</span>
+<span class="g">PERO: los registros originales NO se pueden eliminar (append-only en ES)</span>
+<span class="g">      Solo se pueden inyectar NUEVOS registros falsos (ruido)</span>
+<span class="g">      El audit log de K8s es independiente de stdout del pod</span>
+</pre></div>
+      </div>
+    </div>
+
+    <!-- FASE 3 -->
+    <div class="phase-block">
+      <div class="phase-label label-ok">FASE 3 — Elasticsearch BLOQUEADO (NetworkPolicy)</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">payments/payment-processor — curl → elasticsearch-master.logging:9200</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ FASE 3: Acceso directo a Elasticsearch ═══</span>
+<span class="m">Timestamp: 2026-04-09T15:16:39Z</span>
+<span class="dim">Duración: 254ms</span>
+
+<span class="dim">=== Intento 1: GET http://elasticsearch-master.logging.svc:9200/ ===</span>
+<span class="g b">BLOCKED: connection to ES timed out</span>
+
+<span class="dim">=== Intento 2: DELETE fluentd-* ===</span>
+<span class="g b">BLOCKED: DELETE to ES timed out</span>
+
+<span class="dim">=== Intento 3: POST documento falso ===</span>
+<span class="g b">BLOCKED: POST to ES timed out</span>
+
+<span class="g b">RESULTADO: ACCESO A ELASTICSEARCH BLOQUEADO</span>
+<span class="g">CONTROL EFECTIVO: NetworkPolicy default-deny-all</span>
+<span class="g">  El atacante NO puede:</span>
+<span class="g">  · Eliminar índices (DELETE fluentd-*)</span>
+<span class="g">  · Modificar documentos existentes</span>
+<span class="g">  · Insertar registros falsos directamente en ES</span>
+</pre></div>
+      </div>
+    </div>
+
+    <!-- FASE 4 -->
+    <div class="phase-block">
+      <div class="phase-label label-ok">FASE 4 — Audit log del host INACCESIBLE</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">payments/payment-processor — intento escape de contenedor</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ FASE 4: Acceso al audit log del host ═══</span>
+<span class="m">Timestamp: 2026-04-09T15:16:39Z</span>
+<span class="dim">Duración: 159ms</span>
+
+<span class="dim">=== Intento 1: cat /var/log/kubernetes/audit.log ===</span>
+<span class="y">cat: can't open '/var/log/kubernetes/audit.log': No such file or directory</span>
+
+<span class="dim">=== Intento 2: ls /host/ (hostPath mounts) ===</span>
+<span class="g b">BLOCKED: /host/ no existe (no hay hostPath mounts)</span>
+
+<span class="dim">=== Intento 4: capabilities del contenedor ===</span>
+<span class="g">CapInh: 0000000000000000</span>
+<span class="g">CapPrm: 0000000000000000</span>
+<span class="g">CapEff: 0000000000000000</span>  <span class="dim">← sin capacidades privilegiadas</span>
+<span class="g">CapBnd: 0000000000000000</span>
+
+<span class="g b">RESULTADO: ACCESO AL AUDIT LOG DEL HOST BLOQUEADO</span>
+<span class="g">CONTROLES: No hostPath · no privileges · allowPrivilegeEscalation:false · seccomp</span>
+</pre></div>
+      </div>
+    </div>
+
+    <!-- ES INTEGRITY -->
+    <div class="phase-block">
+      <div class="phase-label label-ok">EVIDENCIA — Integridad Elasticsearch</div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot" style="background:#ff5f56"></div>
+          <div class="dot" style="background:#ffbd2e"></div>
+          <div class="dot" style="background:#27c93f"></div>
+          <span class="title">Elasticsearch — estado de índices fluentd-*</span>
+        </div>
+        <div class="terminal-body"><pre>
+<span class="dim">═══ Evidencia Elasticsearch — Integridad de índices ═══</span>
+<span class="m">Timestamp: 2026-04-09T15:16:51Z</span>
+
+<span class="c">GET /_cat/indices/fluentd-*?v</span>
+
+<span class="dim">health  status  index               docs.count  docs.deleted  store.size</span>
+<span class="y">yellow</span>  <span class="g">open</span>    <span class="c">fluentd-2026.04.09</span>  <span class="g">3734</span>        <span class="g b">0</span>             2mb
+
+<span class="g b">→ docs.deleted = 0 — ningún documento fue eliminado</span>
+<span class="g">→ Los índices son append-only desde Fluentd</span>
+<span class="g">→ Un atacante en un pod de aplicación NO puede acceder al namespace logging</span>
+</pre></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

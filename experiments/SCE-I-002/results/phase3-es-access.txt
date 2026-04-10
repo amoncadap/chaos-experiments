@@ -1,7 +1,7 @@
 ═══ FASE 3: Acceso directo a Elasticsearch ═══
-Timestamp: 2026-03-21T13:44:24Z
+Timestamp: 2026-04-09T15:16:39Z
 Exit code: 0
-Duración: 15152ms
+Duración: 254ms
 
 ─── Output ───
 === Intento 1: Conectar a ES en logging namespace ===

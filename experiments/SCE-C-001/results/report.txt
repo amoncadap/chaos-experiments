@@ -3,7 +3,7 @@
 ║        Exfiltración de credenciales desde pod comprometido         ║
 ╚══════════════════════════════════════════════════════════════════════╝
 
-Fecha de ejecución: 2026-03-21T13:44:04Z
+Fecha de ejecución: 2026-04-09T15:14:18Z
 Target:             payments/payment-processor
 Imagen:             curlimages/curl:latest
 
@@ -25,7 +25,7 @@ RESULTADOS POR FASE
 ├─────────────────────────────────────────────────────────────────────┤
 │ Resultado:    HALLAZGO CONFIRMADO                                  │
 │ Credenciales: 3 encontradas (DB_PASSWORD, API_KEY, STRIPE_KEY) │
-│ Duración:     95ms                                              │
+│ Duración:     135ms                                              │
 │ Evidencia:    results/phase1-recon.txt                             │
 │ Impacto:      Un atacante con exec puede leer secretos directamente│
 └─────────────────────────────────────────────────────────────────────┘
@@ -34,7 +34,7 @@ RESULTADOS POR FASE
 │ FASE 2 — Lectura del ServiceAccount token                         │
 ├─────────────────────────────────────────────────────────────────────┤
 │ Token accesible: false                                        │
-│ Duración:        104ms                                            │
+│ Duración:        137ms                                            │
 │ Evidencia:       results/phase2-sa-token.txt                       │
 └─────────────────────────────────────────────────────────────────────┘
 
@@ -42,7 +42,7 @@ RESULTADOS POR FASE
 │ FASE 3 — Exfiltración por red (egress HTTP a IP externa)          │
 ├─────────────────────────────────────────────────────────────────────┤
 │ Egress bloqueado: true                                         │
-│ Duración:         5157ms                                           │
+│ Duración:         5224ms                                           │
 │ Evidencia:        results/phase3-network-exfil.txt                 │
 │ Control:          NetworkPolicy default-deny-all                   │
 └─────────────────────────────────────────────────────────────────────┘

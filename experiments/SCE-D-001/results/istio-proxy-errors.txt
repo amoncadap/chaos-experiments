@@ -1,5 +1,5 @@
 ═══ Evidencia: Istio proxy logs (user-api → auth-service) ═══
-Timestamp: 2026-03-21T13:49:09Z
+Timestamp: 2026-04-09T15:15:54Z
 Errores encontrados: 30
 
   "upstream_cluster": "outbound|80||auth-service.users.svc.cluster.local;",

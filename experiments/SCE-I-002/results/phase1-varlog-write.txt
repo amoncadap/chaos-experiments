@@ -1,8 +1,8 @@
 ═══ FASE 1: Escritura en /var/log/ ═══
-Timestamp: 2026-03-21T13:44:09Z
+Timestamp: 2026-04-09T15:16:39Z
 Comando: sh -c 'touch /var/log/...; echo > /var/log/...'
 Exit code: 0
-Duración: 103ms
+Duración: 240ms
 
 ─── Output ───
 === Intento 1: Crear archivo en /var/log/ ===

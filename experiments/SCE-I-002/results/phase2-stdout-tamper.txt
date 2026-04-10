@@ -1,7 +1,7 @@
 ═══ FASE 2: Manipulación de stdout/stderr ═══
-Timestamp: 2026-03-21T13:44:09Z
+Timestamp: 2026-04-09T15:16:39Z
 Exit code: 0
-Duración: 124ms
+Duración: 166ms
 
 ─── Output ───
 === Intento 1: Acceso a /proc/1/fd/1 (stdout del PID 1) ===
@@ -10,10 +10,10 @@ Duración: 124ms
 {"level":"INFO","msg":"legitimate-looking-but-fake","user":"admin","action":"login_success"}
 === Intento 4: Leer el log propio del contenedor desde /proc ===
 total 0
-dr-x------    2 1000     1000             3 Mar 21 13:44 .
-dr-xr-xr-x    9 1000     1000             0 Mar 21 13:30 ..
-lrwx------    1 1000     1000            64 Mar 21 13:44 0 -> /dev/null
-l-wx------    1 1000     1000            64 Mar 21 13:44 1 -> pipe:[87910]
+dr-x------    2 1000     1000             3 Apr  9 15:16 .
+dr-xr-xr-x    9 1000     1000             0 Apr  9 14:59 ..
+lrwx------    1 1000     1000            64 Apr  9 15:16 0 -> /dev/null
+l-wx------    1 1000     1000            64 Apr  9 15:16 1 -> pipe:[849899]
 
 ANÁLISIS:
   - Un atacante puede inyectar líneas en stdout del contenedor

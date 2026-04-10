@@ -1,12 +1,12 @@
 ═══ FASE 4: Post-cache (auth-service=0, TTL expirado) ═══
-Timestamp: 2026-03-21T13:48:45Z
+Timestamp: 2026-04-09T15:15:29Z
 auth-service replicas: 0 (confirmado)
 Ventana de medición: 15s
 
 ─── Mediciones: Post-cache (auth=0) (15s, cada 5s) ───
-  [13:48:45] +0s  HTTP 503  FAIL
-  [13:48:51] +5s  HTTP 503  FAIL
-  [13:48:57] +10s  HTTP 503  FAIL
+  [15:15:29] +0s  HTTP 503  FAIL
+  [15:15:35] +5s  HTTP 503  FAIL
+  [15:15:41] +10s  HTTP 503  FAIL
 
   Total: 3 requests | OK: 0 | FAIL: 3
   Disponibilidad: 0%

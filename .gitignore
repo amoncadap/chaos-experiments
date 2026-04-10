@@ -1,0 +1,4 @@
+.DS_Store
+**/.DS_Store
+*.screenshot-ready
+experiments/*/results/terminal-logs/

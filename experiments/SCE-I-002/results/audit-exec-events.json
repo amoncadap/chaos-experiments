@@ -1,65 +1,65 @@
 ═══ Evidencia Audit Log — kubectl exec en payments ═══
-Timestamp recolección: 2026-03-21T13:44:34Z
+Timestamp recolección: 2026-04-09T15:16:51Z
 Eventos encontrados: 9
 
 {
-  "timestamp": "2026-03-21T13:43:43.279215Z",
+  "timestamp": "2026-04-09T15:13:56.538357Z",
   "user": "kubernetes-admin",
   "pod": "payment-processor-66fd7c4f9-rhbt7",
   "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=env&container=payment-processor&stderr=true&stdout=true",
   "sourceIP": "172.18.0.1"
 }
 {
-  "timestamp": "2026-03-21T13:43:43.576365Z",
+  "timestamp": "2026-04-09T15:13:56.943607Z",
   "user": "kubernetes-admin",
   "pod": "payment-processor-66fd7c4f9-rhbt7",
   "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=env&container=payment-processor&stderr=true&stdout=true",
   "sourceIP": "172.18.0.1"
 }
 {
-  "timestamp": "2026-03-21T13:43:43.699341Z",
+  "timestamp": "2026-04-09T15:13:57.121828Z",
   "user": "kubernetes-admin",
   "pod": "payment-processor-66fd7c4f9-rhbt7",
   "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=cat&command=%2Frun%2Fsecrets%2Fkubernetes.io%2Fserviceaccount%2Ftoken&container=payment-processor&stderr=true&stdout=true",
   "sourceIP": "172.18.0.1"
 }
 {
-  "timestamp": "2026-03-21T13:43:43.827954Z",
+  "timestamp": "2026-04-09T15:13:57.297248Z",
   "user": "kubernetes-admin",
   "pod": "payment-processor-66fd7c4f9-rhbt7",
   "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=curl&command=-sf&command=--max-time&command=5&command=http%3A%2F%2F1.1.1.1%2F&container=payment-processor&stderr=true&stdout=true",
   "sourceIP": "172.18.0.1"
 }
 {
-  "timestamp": "2026-03-21T13:43:49.022113Z",
+  "timestamp": "2026-04-09T15:14:02.552612Z",
   "user": "kubernetes-admin",
   "pod": "payment-processor-66fd7c4f9-rhbt7",
   "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=curl&command=-sf&command=--max-time&command=5&command=http%3A%2F%2Fifconfig.me&container=payment-processor&stderr=true&stdout=true",
   "sourceIP": "172.18.0.1"
 }
 {
-  "timestamp": "2026-03-21T13:44:08.952814Z",
+  "timestamp": "2026-04-09T15:16:39.067455Z",
   "user": "kubernetes-admin",
   "pod": "payment-processor-66fd7c4f9-rhbt7",
   "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=sh&command=-c&command=%0A++++echo+%22%3D%3D%3D+Intento+1%3A+Crear+archivo+en+%2Fvar%2Flog%2F+%3D%3D%3D%22%0A++++touch+%2Fvar%2Flog%2Ffake-audit.log+2%3E%261+%7C%7C+echo+%22BLOCKED%3A+touch+%2Fvar%2Flog%2Ffake-audit.log%22%0A++++echo+%22%3D%3D%3D+Intento+2%3A+Escribir+en+%2Fvar%2Flog%2Fmessages+%3D%3D%3D%22%0A++++echo+%22tampered%22+%3E+%2Fvar%2Flog%2Fmessages+2%3E%261+%7C%7C+echo+%22BLOCKED%3A+write+%2Fvar%2Flog%2Fmessages%22%0A++++echo+%22%3D%3D%3D+Intento+3%3A+Crear+directorio+en+%2Fvar%2Flog%2F+%3D%3D%3D%22%0A++++mkdir+-p+%2Fvar%2Flog%2Fattacker+2%3E%261+%7C%7C+echo+%22BLOCKED%3A+mkdir+%2Fvar%2Flog%2Fattacker%22%0A++++echo+%22%3D%3D%3D+Intento+4%3A+Escribir+en+%2Ftmp%2F+%28control+%E2%80%94+debe+funcionar%29+%3D%3D%3D%22%0A++++echo+%22test%22+%3E+%2Ftmp%2Ftest-write.txt+2%3E%261+%26%26+echo+%22ALLOWED%3A+write+%2Ftmp%2Ftest-write.txt%22+%7C%7C+echo+%22BLOCKED%3A+write+%2Ftmp%2F%22%0A++&container=payment-processor&stderr=true&stdout=true",
   "sourceIP": "172.18.0.1"
 }
 {
-  "timestamp": "2026-03-21T13:44:09.100295Z",
+  "timestamp": "2026-04-09T15:16:39.342460Z",
   "user": "kubernetes-admin",
   "pod": "payment-processor-66fd7c4f9-rhbt7",
   "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=sh&command=-c&command=%0A++++echo+%22%3D%3D%3D+Intento+1%3A+Acceso+a+%2Fproc%2F1%2Ffd%2F1+%28stdout+del+PID+1%29+%3D%3D%3D%22%0A++++echo+%22TAMPERED+LOG+ENTRY%22+%3E+%2Fproc%2F1%2Ffd%2F1+2%3E%261+%7C%7C+echo+%22BLOCKED%3A+write+to+%2Fproc%2F1%2Ffd%2F1%22%0A++++echo+%22%3D%3D%3D+Intento+2%3A+Acceso+a+%2Fproc%2F1%2Ffd%2F2+%28stderr+del+PID+1%29+%3D%3D%3D%22%0A++++echo+%22TAMPERED+STDERR%22+%3E+%2Fproc%2F1%2Ffd%2F2+2%3E%261+%7C%7C+echo+%22BLOCKED%3A+write+to+%2Fproc%2F1%2Ffd%2F2%22%0A++++echo+%22%3D%3D%3D+Intento+3%3A+Inyectar+l%C3%ADnea+falsa+en+stdout+%28ataque+de+log+injection%29+%3D%3D%3D%22%0A++++echo+%22%7B%5C%22level%5C%22%3A%5C%22INFO%5C%22%2C%5C%22msg%5C%22%3A%5C%22legitimate-looking-but-fake%5C%22%2C%5C%22user%5C%22%3A%5C%22admin%5C%22%2C%5C%22action%5C%22%3A%5C%22login_success%5C%22%7D%22%0A++++echo+%22%3D%3D%3D+Intento+4%3A+Leer+el+log+propio+del+contenedor+desde+%2Fproc+%3D%3D%3D%22%0A++++ls+-la+%2Fproc%2F1%2Ffd%2F+2%3E%261+%7C+head+-5+%7C%7C+echo+%22BLOCKED%3A+ls+%2Fproc%2F1%2Ffd%2F%22%0A++&container=payment-processor&stderr=true&stdout=true",
   "sourceIP": "172.18.0.1"
 }
 {
-  "timestamp": "2026-03-21T13:44:09.232518Z",
+  "timestamp": "2026-04-09T15:16:39.546892Z",
   "user": "kubernetes-admin",
   "pod": "payment-processor-66fd7c4f9-rhbt7",
   "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=sh&command=-c&command=%0A++++echo+%22%3D%3D%3D+Intento+1%3A+Conectar+a+ES+en+logging+namespace+%3D%3D%3D%22%0A++++curl+-sf+--max-time+5+http%3A%2F%2Felasticsearch-master.logging.svc.cluster.local%3A9200%2F+2%3E%261+%7C%7C+echo+%22BLOCKED%3A+connection+to+ES+timed+out%22%0A++++echo+%22%22%0A++++echo+%22%3D%3D%3D+Intento+2%3A+Intentar+eliminar+%C3%ADndice+fluentd+%3D%3D%3D%22%0A++++curl+-sf+--max-time+5+-X+DELETE+http%3A%2F%2Felasticsearch-master.logging.svc.cluster.local%3A9200%2Ffluentd-%2A+2%3E%261+%7C%7C+echo+%22BLOCKED%3A+DELETE+to+ES+timed+out%22%0A++++echo+%22%22%0A++++echo+%22%3D%3D%3D+Intento+3%3A+Intentar+insertar+documento+falso+%3D%3D%3D%22%0A++++curl+-sf+--max-time+5+-X+POST+http%3A%2F%2Felasticsearch-master.logging.svc.cluster.local%3A9200%2Ffluentd-fake%2F_doc+-H+%22Content-Type%3A+application%2Fjson%22+-d+%22%7B%5C%22msg%5C%22%3A%5C%22tampered%5C%22%7D%22+2%3E%261+%7C%7C+echo+%22BLOCKED%3A+POST+to+ES+timed+out%22%0A++&container=payment-processor&stderr=true&stdout=true",
   "sourceIP": "172.18.0.1"
 }
 {
-  "timestamp": "2026-03-21T13:44:24.429432Z",
+  "timestamp": "2026-04-09T15:16:39.840553Z",
   "user": "kubernetes-admin",
   "pod": "payment-processor-66fd7c4f9-rhbt7",
   "command": "/api/v1/namespaces/payments/pods/payment-processor-66fd7c4f9-rhbt7/exec?command=sh&command=-c&command=%0A++++echo+%22%3D%3D%3D+Intento+1%3A+Leer+audit+log+del+host+%3D%3D%3D%22%0A++++cat+%2Fvar%2Flog%2Fkubernetes%2Faudit.log+2%3E%261+%7C+head+-3+%7C%7C+echo+%22BLOCKED%3A+%2Fvar%2Flog%2Fkubernetes%2F+no+accesible%22%0A++++echo+%22%22%0A++++echo+%22%3D%3D%3D+Intento+2%3A+Listar+%2Fhost%2F+%28hostPath+mounts%29+%3D%3D%3D%22%0A++++ls+%2Fhost%2F+2%3E%261+%7C%7C+echo+%22BLOCKED%3A+%2Fhost%2F+no+existe+%28no+hay+hostPath+mounts%29%22%0A++++echo+%22%22%0A++++echo+%22%3D%3D%3D+Intento+3%3A+Acceso+a+%2Fproc%2F1%2Froot%2F+%28namespace+escape%29+%3D%3D%3D%22%0A++++ls+%2Fproc%2F1%2Froot%2Fvar%2Flog%2F+2%3E%261+%7C+head+-5+%7C%7C+echo+%22BLOCKED%3A+no+se+puede+acceder+al+filesystem+del+host%22%0A++++echo+%22%22%0A++++echo+%22%3D%3D%3D+Intento+4%3A+Verificar+capabilities+del+contenedor+%3D%3D%3D%22%0A++++cat+%2Fproc%2F1%2Fstatus+2%3E%261+%7C+grep+-i+%22cap%22+%7C%7C+echo+%22BLOCKED%3A+no+se+puede+leer+capabilities%22%0A++&container=payment-processor&stderr=true&stdout=true",

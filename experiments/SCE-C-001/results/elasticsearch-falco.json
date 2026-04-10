@@ -1,13 +1,13 @@
 ═══ Evidencia Elasticsearch — Eventos Falco indexados ═══
-Timestamp recolección: 2026-03-21T13:44:04Z
+Timestamp recolección: 2026-04-09T15:14:18Z
 Hits encontrados: 0
 
 {
-  "took": 202,
+  "took": 52,
   "timed_out": false,
   "_shards": {
-    "total": 1,
-    "successful": 1,
+    "total": 4,
+    "successful": 4,
     "skipped": 0,
     "failed": 0
   },
